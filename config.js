@@ -11,6 +11,6 @@
                 якщо тренажер використовується кілька разів на рік. */
 window.TRAINER_CONFIG = {
   endpoint: "",
-  writeToken: "opd2026",
+  writeToken: "9878372912",
   lesson: "Практична робота № 1"
 };
