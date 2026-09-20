@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Результати тренажера — сторінка викладача</title>
+<style>
+  :root{
+    --navy:#1B3A6B; --green:#5B8C72; --dgreen:#1B5E20;
+    --ink:#1c2430; --muted:#5b6673; --line:#d8dee7;
+    --bg:#f4f6f9; --card:#fff; --warn:#8a6d00; --warnbg:#fff7dd;
+    --err:#9b2226; --errbg:#fdecec; --okbg:#e8f5e9;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font:16px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif}
+  .wrap{max-width:1040px;margin:0 auto;padding:0 16px 48px}
+  header{background:var(--navy);color:#fff;padding:14px 0 12px}
+  header .wrap{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between}
+  .brand{font-weight:700;font-size:17px}
+  .brand small{display:block;font-weight:400;font-size:12px;opacity:.85}
+  .badge{background:#fff3cd;color:#6b4e00;border:1px solid #e0c97a;border-radius:999px;
+    padding:5px 12px;font-size:12px;font-weight:700}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px;margin-top:16px}
+  h1{font-size:22px;margin:18px 0 6px;color:var(--navy)}
+  h2{font-size:19px;margin:0 0 4px;color:var(--navy)}
+  h3{font-size:15px;margin:18px 0 8px;color:var(--dgreen);text-transform:uppercase;letter-spacing:.4px}
+  p{margin:8px 0} .lead{color:var(--muted)}
+  label{display:block;font-size:14px;font-weight:600;margin:14px 0 5px}
+  input[type=text],input[type=password],input[type=number],select{
+    width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:8px;font-size:16px;
+    font-family:inherit;background:#fff;color:var(--ink)}
+  input:focus,select:focus{outline:2px solid var(--navy);outline-offset:1px}
+  .row{display:flex;gap:12px;flex-wrap:wrap} .row>*{flex:1 1 200px}
+  button{font:inherit;cursor:pointer;border-radius:8px;border:1px solid transparent;padding:11px 16px;font-weight:600}
+  .btn{background:var(--navy);color:#fff} .btn:hover{background:#16305a}
+  .btn:disabled{background:#93a2b8;cursor:default}
+  .btn2{background:#fff;color:var(--navy);border-color:var(--line)} .btn2:hover{background:#eef2f7}
+  .actions{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap}
+  .msg{border-radius:8px;padding:12px 14px;margin-top:14px;font-size:14px;display:none}
+  .msg.err{background:var(--errbg);border:1px solid #f0b8b8;color:var(--err);display:block}
+  .msg.warn{background:var(--warnbg);border:1px solid #e8dba6;color:var(--warn);display:block}
+  .msg.ok{background:var(--okbg);border:1px solid #a9d6ad;color:#1b5e20;display:block}
+  table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+  th,td{text-align:left;padding:8px 9px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{background:#eef2f7;color:var(--navy);cursor:pointer;white-space:nowrap}
+  tbody tr:hover{background:#f7f9fc}
+  td.num{text-align:center;font-weight:700}
+  .tag{display:inline-block;background:#eef2f7;border-radius:999px;padding:2px 9px;font-size:12px;color:var(--navy)}
+  .stat{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+  .stat div{flex:1 1 150px;border:1px solid var(--line);border-radius:10px;padding:12px;background:#fff}
+  .stat b{display:block;font-size:22px;color:var(--navy)}
+  .stat span{font-size:13px;color:var(--muted)}
+  .code{font-size:20px;letter-spacing:3px;font-weight:700;color:var(--navy)}
+  .hint{font-size:13px;color:var(--muted);margin-top:4px}
+  .hidden{display:none}
+  footer{color:var(--muted);font-size:13px;margin-top:26px;text-align:center}
+  footer a{color:var(--muted)}
+  .scroll{overflow-x:auto}
+  @media print{header,.noprint,footer{display:none!important} body{background:#fff} .card{border:none;padding:0}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="brand">Результати навчального тренажера
+      <small>Основи підприємницької діяльності · Сторожинецький лісовий фаховий коледж</small></div>
+    <div class="badge">СТОРІНКА ВИКЛАДАЧА</div>
+  </div>
+</header>
+
+<div class="wrap">
+
+<h1>Журнал виконаних робіт</h1>
+<p class="lead">Тут видно результати, які тренажер надіслав до вашої Google&nbsp;таблиці, і працює перевірка контрольного коду для тих студентів, у кого результат не надіслався.</p>
+
+<!-- ---------- вхід ---------- -->
+<section class="card" id="login">
+  <h2>Вхід</h2>
+  <p class="lead">Введіть пароль викладача — той, який ви вписали у файл <code>Code.gs</code> у полі <code>ADMIN_TOKEN</code>. Пароль зберігається лише до закриття вкладки й ніде в коді сайту не записаний.</p>
+  <div class="row">
+    <div>
+      <label for="pass">Пароль викладача</label>
+      <input type="password" id="pass" autocomplete="off" placeholder="ADMIN_TOKEN">
+    </div>
+  </div>
+  <div class="actions">
+    <button class="btn" id="enter">Показати результати</button>
+  </div>
+  <div class="msg" id="loginMsg"></div>
+</section>
+
+<!-- ---------- журнал ---------- -->
+<section class="card hidden" id="journal">
+  <h2>Надіслані результати</h2>
+  <div class="row noprint">
+    <div>
+      <label for="fName">Пошук за прізвищем</label>
+      <input type="text" id="fName" placeholder="почніть вводити прізвище">
+    </div>
+    <div>
+      <label for="fGroup">Група</label>
+      <select id="fGroup"><option value="">усі групи</option></select>
+    </div>
+    <div>
+      <label for="fLesson">Заняття</label>
+      <select id="fLesson"><option value="">усі заняття</option></select>
+    </div>
+  </div>
+
+  <div class="stat" id="stat"></div>
+
+  <div class="scroll">
+    <table id="tbl">
+      <thead><tr>
+        <th data-k="ts">Час</th><th data-k="n">Студент</th><th data-k="g">Група</th>
+        <th data-k="c">Картка</th><th data-k="s">Бал</th><th data-k="k">Код</th>
+        <th data-k="m">Хв</th><th data-k="kv">КВЕД</th><th data-k="gr">Система</th>
+        <th data-k="e">Помилки</th>
+      </tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+  <p class="hint">Клацніть на заголовок стовпця, щоб упорядкувати. Стовпець «Помилки» показує кроки, де студент помилився й виправився.</p>
+
+  <div class="actions noprint">
+    <button class="btn2" id="reload">Оновити</button>
+    <button class="btn2" id="csv">Зберегти у файл CSV</button>
+    <button class="btn2" onclick="window.print()">Роздрукувати</button>
+  </div>
+  <div class="msg" id="jMsg"></div>
+</section>
+
+<!-- ---------- перевірка коду ---------- -->
+<section class="card">
+  <h2>Перевірка контрольного коду</h2>
+  <p class="lead">Якщо в студента не було інтернету, він називає код із витягу. Введіть його прізвище та ім'я так само, як вони записані у витязі, номер картки й код — сторінка покаже, якому балу цей код відповідає. Підроблений або змінений бал коду не дасть.</p>
+  <div class="row">
+    <div>
+      <label for="cName">Прізвище та ім'я студента</label>
+      <input type="text" id="cName" placeholder="як у витязі">
+    </div>
+    <div>
+      <label for="cCase">Номер картки</label>
+      <input type="number" id="cCase" min="1" max="14" placeholder="1–14">
+    </div>
+    <div>
+      <label for="cCode">Контрольний код</label>
+      <input type="text" id="cCode" maxlength="4" placeholder="4 символи" style="text-transform:uppercase">
+    </div>
+  </div>
+  <div class="actions">
+    <button class="btn" id="check">Перевірити</button>
+  </div>
+  <div class="msg" id="checkMsg"></div>
+</section>
+
+<footer class="noprint">
+  <a href="index.html">← До тренажера</a> · Навчальний матеріал, юридичної сили не має.
+</footer>
+</div>
+
+<script src="config.js"></script>
+<script>
+const $ = id => document.getElementById(id);
+
+/* Той самий алгоритм контрольного коду, що й у тренажері. */
+function checkCode(name, caseId, score){
+  const s = String(name).trim().toLowerCase().replace(/\s+/g," ") + "|" + caseId + "|" + score;
+  let h = 7;
+  for (let i=0;i<s.length;i++){ h = (h*31 + s.charCodeAt(i)) >>> 0; }
+  const A = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+  let out = "", x = h;
+  for (let i=0;i<4;i++){ out += A[x % A.length]; x = Math.floor(x / A.length); }
+  return out;
+}
+
+function show(box, cls, html){ const b = $(box); b.className = "msg " + cls; b.innerHTML = html; }
+
+/* ---------- перевірка коду ---------- */
+$("check").onclick = () => {
+  const name = ($("cName").value||"").trim();
+  const id = Number($("cCase").value);
+  const code = ($("cCode").value||"").trim().toUpperCase();
+  if (!name || !id || code.length !== 4) {
+    show("checkMsg","warn","Заповніть усі три поля: прізвище та ім'я, номер картки (1–14) і чотиризначний код.");
+    return;
+  }
+  let found = null;
+  for (let s = 12; s >= 0; s--) if (checkCode(name, id, s) === code) { found = s; break; }
+  if (found === null) {
+    show("checkMsg","err","Код не підходить. Можливі причини: прізвище та ім'я введені інакше, ніж у витязі (перевірте літера в літеру), переплутано номер картки або код записано з помилкою.");
+  } else {
+    const lvl = found>=10?"високий":found>=7?"достатній":found>=4?"середній":"початковий";
+    show("checkMsg","ok","Код дійсний. Бал за тренажер: <b>"+found+" з 12</b> — "+lvl+" рівень.");
+  }
+};
+
+/* ---------- запит результатів (JSONP) ---------- */
+let seq = 0;
+function jsonp(params, done){
+  const cfg = window.TRAINER_CONFIG || {};
+  if (!cfg.endpoint) { done(false, {error:"Адресу сервера не налаштовано у файлі config.js. Журнал працюватиме після налаштування Google Таблиці — перевірка коду доступна й без неї."}); return; }
+  const cb = "r" + (++seq) + "_" + Date.now();
+  const timer = setTimeout(() => { cleanup(); done(false, {error:"Сервер не відповів."}); }, 15000);
+  function cleanup(){ clearTimeout(timer); delete window[cb]; if (s.parentNode) s.parentNode.removeChild(s); }
+  window[cb] = res => { cleanup(); done(!!(res && res.ok), res || {}); };
+  const q = Object.entries({...params, callback:cb})
+    .map(([k,v]) => encodeURIComponent(k)+"="+encodeURIComponent(v)).join("&");
+  const s = document.createElement("script");
+  s.src = cfg.endpoint + (cfg.endpoint.includes("?") ? "&" : "?") + q;
+  s.onerror = () => { cleanup(); done(false, {error:"Не вдалося з'єднатися із сервером."}); };
+  document.body.appendChild(s);
+}
+
+/* ---------- журнал ---------- */
+let ROWS = [], sortKey = "ts", sortDir = -1;
+const GRP = {0:"загальна", 1:"1 група", 2:"2 група", 3:"3 група"};
+const ERRNAME = {sign:"підпис", data:"дані", age:"вік/додатки", kved:"КВЕД", group:"система"};
+
+function load(pass){
+  show("loginMsg","warn","Завантажуємо…");
+  jsonp({action:"list", token:pass}, (ok, res) => {
+    if (!ok) { show("loginMsg","err", res.error || "Не вдалося отримати дані."); return; }
+    sessionStorage.setItem("opd_admin", pass);
+    $("loginMsg").className = "msg";
+    $("login").classList.add("hidden");
+    $("journal").classList.remove("hidden");
+    ROWS = res.rows || [];
+    fillFilters(); draw();
+  });
+}
+
+function fillFilters(){
+  const set = (sel, vals) => {
+    const el = $(sel), keep = el.value;
+    el.innerHTML = `<option value="">${sel==="fGroup"?"усі групи":"усі заняття"}</option>` +
+      [...new Set(vals.filter(Boolean))].sort().map(v=>`<option>${v}</option>`).join("");
+    el.value = keep;
+  };
+  set("fGroup", ROWS.map(r=>r.g));
+  set("fLesson", ROWS.map(r=>r.l));
+}
+
+function filtered(){
+  const n = ($("fName").value||"").trim().toLowerCase();
+  const g = $("fGroup").value, l = $("fLesson").value;
+  return ROWS.filter(r =>
+    (!n || String(r.n).toLowerCase().includes(n)) &&
+    (!g || r.g === g) && (!l || r.l === l));
+}
+
+function draw(){
+  const rows = filtered().slice().sort((a,b) => {
+    const x = a[sortKey], y = b[sortKey];
+    const c = (typeof x === "number" && typeof y === "number") ? x - y : String(x).localeCompare(String(y), "uk");
+    return c * sortDir;
+  });
+  $("tbl").tBodies[0].innerHTML = rows.map(r => `<tr>
+      <td>${r.ts||""}</td><td>${r.n||""}</td><td>${r.g||""}</td>
+      <td class="num">${r.c||""}</td><td class="num">${r.s}</td>
+      <td><span class="tag">${r.k||""}</span></td><td class="num">${r.m||""}</td>
+      <td>${r.kv||""}</td><td>${GRP[r.gr] ?? r.gr ?? ""}</td>
+      <td>${String(r.e||"").split("|").filter(Boolean).map(e=>ERRNAME[e]||e).join(", ")}</td>
+    </tr>`).join("") || `<tr><td colspan="10">Поки що немає жодного надісланого результату.</td></tr>`;
+
+  const n = rows.length;
+  const avg = n ? (rows.reduce((s,r)=>s+Number(r.s||0),0)/n) : 0;
+  const clean = rows.filter(r=>!String(r.e||"").replace(/\|/g,"")).length;
+  const time = n ? (rows.reduce((s,r)=>s+Number(r.m||0),0)/n) : 0;
+  $("stat").innerHTML = `
+    <div><b>${n}</b><span>робіт у списку</span></div>
+    <div><b>${avg.toFixed(1)}</b><span>середній бал із 12</span></div>
+    <div><b>${clean}</b><span>без жодної помилки</span></div>
+    <div><b>${time.toFixed(0)} хв</b><span>середній час роботи</span></div>`;
+}
+
+document.querySelectorAll("#tbl th").forEach(th => th.onclick = () => {
+  const k = th.dataset.k;
+  sortDir = (k === sortKey) ? -sortDir : 1;
+  sortKey = k; draw();
+});
+["fName","fGroup","fLesson"].forEach(id => $(id).addEventListener("input", draw));
+
+$("enter").onclick = () => {
+  const p = ($("pass").value||"").trim();
+  if (!p) { show("loginMsg","warn","Введіть пароль викладача."); return; }
+  load(p);
+};
+$("pass").addEventListener("keydown", e => { if (e.key === "Enter") $("enter").click(); });
+$("reload").onclick = () => {
+  const p = sessionStorage.getItem("opd_admin");
+  if (!p) { location.reload(); return; }
+  show("jMsg","warn","Оновлюємо…");
+  jsonp({action:"list", token:p}, (ok, res) => {
+    if (!ok) { show("jMsg","err", res.error || "Не вдалося оновити."); return; }
+    ROWS = res.rows || []; fillFilters(); draw();
+    show("jMsg","ok","Список оновлено: " + ROWS.length + " робіт.");
+  });
+};
+$("csv").onclick = () => {
+  const rows = filtered();
+  const head = ["Час","Студент","Група","Заняття","Картка","Бал","Код","Хвилин","КВЕД","Система","Помилки"];
+  const body = rows.map(r => [r.ts,r.n,r.g,r.l,r.c,r.s,r.k,r.m,r.kv,GRP[r.gr] ?? r.gr, r.e]);
+  const csv = "﻿" + [head, ...body]
+    .map(line => line.map(v => `"${String(v ?? "").replace(/"/g,'""')}"`).join(";")).join("\r\n");
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([csv], {type:"text/csv;charset=utf-8"}));
+  a.download = "Результати_тренажера.csv"; a.click();
+};
+
+/* якщо пароль уже вводили в цій вкладці — одразу показуємо журнал */
+(() => { const p = sessionStorage.getItem("opd_admin"); if (p) { $("pass").value = p; load(p); } })();
+</script>
+</body>
+</html>
