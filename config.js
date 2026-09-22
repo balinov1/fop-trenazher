@@ -10,7 +10,7 @@
    lesson     — підпис заняття, потрапляє в таблицю результатів. Зручно міняти,
                 якщо тренажер використовується кілька разів на рік. */
 window.TRAINER_CONFIG = {
-  endpoint: "",
-  writeToken: "opd2026",
+  endpoint: "https://script.google.com/macros/s/AKfycbwaGPkjqXtlZEeURdvejWBdIzcBOGqnMSMpljg6vD58B8UZS81XaSfUi1K2lBmIF6sA/exec",
+  writeToken: "98783729",
   lesson: "Практична робота № 1"
 };
