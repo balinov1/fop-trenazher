@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Навчальний тренажер: реєстрація ТОВ</title>
+<style>
+  :root{
+    --navy:#1B3A6B; --green:#5B8C72; --dgreen:#1B5E20;
+    --ink:#1c2430; --muted:#5b6673; --line:#d8dee7;
+    --bg:#f4f6f9; --card:#ffffff; --warn:#8a6d00; --warnbg:#fff7dd;
+    --err:#9b2226; --errbg:#fdecec; --okbg:#e8f5e9;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font:16px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;}
+  .wrap{max-width:900px;margin:0 auto;padding:0 16px 48px}
+  header{background:var(--navy);color:#fff;padding:14px 0 12px}
+  header .wrap{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between}
+  .brand{font-weight:700;font-size:17px}
+  .brand small{display:block;font-weight:400;font-size:12px;opacity:.85}
+  .badge{background:#fff3cd;color:#6b4e00;border:1px solid #e0c97a;border-radius:999px;
+    padding:5px 12px;font-size:12px;font-weight:700;white-space:nowrap}
+  .notice{background:var(--warnbg);border-bottom:1px solid #e8dba6;color:#6b5600;font-size:13px;padding:8px 0}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px;margin-top:16px}
+  h1{font-size:22px;margin:18px 0 6px;color:var(--navy)}
+  h2{font-size:19px;margin:0 0 4px;color:var(--navy)}
+  h3{font-size:15px;margin:18px 0 8px;color:var(--dgreen);text-transform:uppercase;letter-spacing:.4px}
+  h4{font-size:15px;margin:16px 0 6px;color:var(--navy)}
+  p{margin:8px 0}
+  .lead{color:var(--muted)}
+  .steps{display:flex;gap:6px;margin-top:14px;flex-wrap:wrap}
+  .steps div{flex:1 1 40px;height:6px;border-radius:99px;background:#dde3ea}
+  .steps div.done{background:var(--green)} .steps div.now{background:var(--navy)}
+  .stepno{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;font-weight:700}
+  label{display:block;font-size:14px;font-weight:600;margin:14px 0 5px}
+  input[type=text],input[type=date],input[type=email],input[type=tel],input[type=number],select{
+    width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:8px;font-size:16px;
+    font-family:inherit;background:#fff;color:var(--ink)}
+  input:focus,select:focus{outline:2px solid var(--navy);outline-offset:1px}
+  .hint{font-size:13px;color:var(--muted);margin-top:4px}
+  .row{display:flex;gap:12px;flex-wrap:wrap}
+  .row>*{flex:1 1 200px}
+  button{font:inherit;cursor:pointer;border-radius:8px;border:1px solid transparent;padding:12px 18px;font-weight:600}
+  .btn{background:var(--navy);color:#fff} .btn:hover{background:#16305a}
+  .btn:disabled{background:#93a2b8;cursor:default}
+  .btn2{background:#fff;color:var(--navy);border-color:var(--line)} .btn2:hover{background:#eef2f7}
+  .btn3{background:#fff;color:var(--muted);border-color:var(--line);padding:8px 12px;font-size:14px}
+  .actions{display:flex;gap:10px;margin-top:22px;flex-wrap:wrap}
+  .caseGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px;margin-top:14px}
+  .caseCard{border:1px solid var(--line);border-radius:10px;padding:14px;background:#fff;cursor:pointer;text-align:left}
+  .caseCard:hover{border-color:var(--navy);background:#f7f9fc}
+  .caseCard b{display:block;color:var(--navy);margin-bottom:4px} .caseCard span{font-size:13px;color:var(--muted)}
+  .casebox{background:#f0f4f9;border-left:4px solid var(--navy);border-radius:0 8px 8px 0;padding:12px 14px;margin:14px 0;font-size:14px}
+  .casebox b{color:var(--navy)}
+  .rolebox{background:#fffaf0;border-left:4px solid #c8922a;border-radius:0 8px 8px 0;padding:10px 14px;margin:12px 0;font-size:14px}
+  .rolebox b{color:#8a6d00}
+  .opt{display:block;border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-top:10px;cursor:pointer;background:#fff}
+  .opt:hover{background:#f7f9fc} .opt input{margin-right:8px} .opt b{color:var(--navy)}
+  .opt small{display:block;color:var(--muted);margin-top:4px;font-size:13px;margin-left:24px}
+  .msg{border-radius:8px;padding:12px 14px;margin-top:14px;font-size:14px;display:none}
+  .msg.err{background:var(--errbg);border:1px solid #f0b8b8;color:var(--err);display:block}
+  .msg.warn{background:var(--warnbg);border:1px solid #e8dba6;color:var(--warn);display:block}
+  .msg.ok{background:var(--okbg);border:1px solid #a9d6ad;color:#1b5e20;display:block}
+  table{width:100%;border-collapse:collapse;margin-top:10px;font-size:14px}
+  th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{background:#eef2f7;color:var(--navy)}
+  .kvedList{max-height:240px;overflow:auto;border:1px solid var(--line);border-radius:8px;margin-top:8px}
+  .kvedList label{display:flex;gap:10px;align-items:flex-start;margin:0;padding:10px 12px;border-bottom:1px solid #eef1f5;font-weight:400;cursor:pointer}
+  .kvedList label:hover{background:#f7f9fc}
+  .kvedList code{font-weight:700;color:var(--navy);min-width:52px}
+  .person{border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-top:12px;background:#fcfdff}
+  .person h4{margin:0 0 4px}
+  .shareBar{height:10px;border-radius:99px;background:#e6ebf2;overflow:hidden;display:flex;margin-top:8px}
+  .shareBar i{display:block;height:100%}
+  .extract{border:2px solid var(--navy);border-radius:10px;padding:18px;margin-top:16px;background:#fff;position:relative}
+  .extract h4{margin:0 0 2px;color:var(--navy);font-size:17px}
+  .stamp{position:absolute;right:14px;top:14px;border:2px solid #b9c4d2;color:#b9c4d2;border-radius:6px;
+    padding:4px 8px;font-size:11px;font-weight:700;transform:rotate(-6deg)}
+  .code{font-size:22px;letter-spacing:4px;font-weight:700;color:var(--navy)}
+  .doc{border:1px solid var(--line);border-radius:10px;padding:22px 26px;margin-top:14px;background:#fff;
+    font-family:"Times New Roman",Georgia,serif;font-size:15px;line-height:1.55}
+  .doc h5{text-align:center;font-size:16px;margin:0 0 4px;text-transform:uppercase;letter-spacing:.5px}
+  .doc .ctr{text-align:center}
+  .doc .sec{font-weight:700;margin:16px 0 4px}
+  .doc p{margin:5px 0;text-align:justify}
+  .doc .sign{display:flex;justify-content:space-between;margin-top:8px}
+  footer{color:var(--muted);font-size:13px;margin-top:26px;text-align:center}
+  footer a{color:var(--muted)}
+  .hidden{display:none}
+  @media print{
+    header,.notice,.actions,.noprint,footer{display:none!important}
+    body{background:#fff} .card{border:none;padding:0;margin:0}
+    .doc{border:none;padding:0;page-break-after:always}
+    .extract{border:2px solid #000}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="brand">Навчальний тренажер «Реєстрація ТОВ»
+      <small>Основи підприємницької діяльності · Сторожинецький лісовий фаховий коледж</small></div>
+    <div class="badge">НЕ Є ДЕРЖАВНИМ СЕРВІСОМ</div>
+  </div>
+</header>
+<div class="notice"><div class="wrap">Навчальний симулятор. Усі особи, адреси й документи вигадані, витяг і статут юридичної сили не мають. Вводьте лише дані зі своїх карток завдань.</div></div>
+
+<div class="wrap">
+
+<section id="s0" class="screen">
+  <h1>Створюємо товариство з обмеженою відповідальністю</h1>
+  <p class="lead">Працюєте командою 2–3 особи за одним пристроєм. У кожного своя картка, і в жодній картці немає всіх даних — тренажер щоразу підкаже, чия черга говорити.</p>
+  <div class="card">
+    <h2>Склад команди</h2>
+    <p class="lead">Впишіть прізвища та імена всіх учасників команди — вони потраплять у відомість викладача.</p>
+    <div class="row">
+      <div><label for="m1">Учасник із карткою А</label><input type="text" id="m1" placeholder="прізвище та ім'я"></div>
+      <div><label for="m2">Учасник із карткою Б</label><input type="text" id="m2" placeholder="прізвище та ім'я"></div>
+      <div><label for="m3">Учасник із карткою В</label><input type="text" id="m3" placeholder="якщо команда з двох — залиште порожнім"></div>
+    </div>
+    <div class="row">
+      <div style="flex:0 1 220px"><label for="sgroup">Група</label><input type="text" id="sgroup" placeholder="наприклад: ОО-21"></div>
+    </div>
+    <div class="msg" id="msg0"></div>
+    <h3>Оберіть номер своєї команди</h3>
+    <p class="lead">Номер написано вгорі ваших карток — він має збігатися в усіх учасників.</p>
+    <div class="caseGrid" id="caseGrid"></div>
+  </div>
+</section>
+
+<section id="steps" class="screen hidden">
+  <div class="card">
+    <div class="steps" id="bar"></div>
+    <p class="stepno" id="stepno"></p>
+    <h2 id="stepTitle"></h2>
+    <p class="lead" id="stepLead"></p>
+    <div class="casebox" id="caseBox"></div>
+    <div class="rolebox" id="roleBox"></div>
+    <div id="stepBody"></div>
+    <div class="msg" id="msg"></div>
+    <div class="actions">
+      <button class="btn" id="next">Далі</button>
+      <button class="btn2" id="back">Назад</button>
+    </div>
+  </div>
+</section>
+
+<section id="result" class="screen hidden">
+  <div class="card" id="resultCard"></div>
+  <div id="docs"></div>
+</section>
+
+<footer class="noprint">
+  Навчальний тренажер для заняття з дисципліни «Основи підприємницької діяльності». Дані вигадані, документи юридичної сили не мають.<br>
+  <a href="index.html">Тренажер «Реєстрація ФОП»</a> · <a href="results.html">Сторінка викладача</a>
+</footer>
+</div>
+
+<script src="config.js"></script>
+<script src="tov_data.js"></script>
+<script>
+/* ---------- розкодування ключа до завдань ---------- */
+const KEY = (() => {
+  const pass = atob(window.TKP);
+  const bin = atob(window.TK);
+  const bytes = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i) ^ pass.charCodeAt(i % pass.length);
+  return JSON.parse(new TextDecoder("utf-8").decode(bytes));
+})();
+const keyOf = id => KEY.find(k => k.id === id);
+
+const KVED = [
+  {c:"10.71", t:"Виробництво хліба та борошняних кондитерських виробів"},
+  {c:"11.05", t:"Виробництво пива"},
+  {c:"14.13", t:"Виробництво іншого верхнього одягу"},
+  {c:"16.23", t:"Виробництво інших дерев'яних будівельних конструкцій і столярних виробів"},
+  {c:"31.02", t:"Виробництво кухонних меблів"},
+  {c:"31.09", t:"Виробництво інших меблів"},
+  {c:"33.12", t:"Ремонт і технічне обслуговування машин і устатковання"},
+  {c:"45.20", t:"Технічне обслуговування та ремонт автотранспортних засобів"},
+  {c:"47.11", t:"Роздрібна торгівля в неспеціалізованих магазинах з перевагою продуктів"},
+  {c:"47.25", t:"Роздрібна торгівля напоями в спеціалізованих магазинах"},
+  {c:"47.91", t:"Роздрібна торгівля, що здійснюється через мережу Інтернет"},
+  {c:"49.41", t:"Вантажний автомобільний транспорт"},
+  {c:"52.29", t:"Інша допоміжна діяльність у сфері транспорту"},
+  {c:"56.10", t:"Діяльність ресторанів, надання послуг мобільного харчування"},
+  {c:"56.30", t:"Обслуговування напоями"},
+  {c:"62.01", t:"Комп'ютерне програмування"},
+  {c:"63.11", t:"Оброблення даних, розміщення інформації на вебвузлах"},
+  {c:"68.20", t:"Надання в оренду й експлуатацію власного чи орендованого нерухомого майна"},
+  {c:"86.90", t:"Інша діяльність у сфері охорони здоров'я"},
+  {c:"96.02", t:"Надання послуг перукарнями та салонами краси"},
+];
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s == null ? "" : s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]));
+const money = n => Number(n).toLocaleString("uk-UA") + " грн";
+
+let S = { caseId:null, step:0, score:12, errors:[], team:[], sgroup:"", started:0,
+          name:"", opf:"", founders:[], capital:0, statute:null, statuteOpts:{},
+          director:null, hired:{}, meeting:{}, kvedMain:null, tax:null, vat:null, ubo:[] };
+
+const STEPS = [
+  {no:"Крок 1 з 8", title:"Найменування товариства", role:"А",
+   lead:"Найменування складається з організаційно-правової форми і власної назви в лапках. Воно має бути унікальним: реєстратор відмовить, якщо таке саме вже є в реєстрі."},
+  {no:"Крок 2 з 8", title:"Склад учасників", role:"усі",
+   lead:"Кожен учасник диктує свої дані з власної картки. Засновником може бути особа, яка досягла 18 років."},
+  {no:"Крок 3 з 8", title:"Статутний капітал і вклади", role:"усі",
+   lead:"Статутний капітал складається з вкладів учасників. Частка кожного визначається як відношення його вкладу до всього капіталу."},
+  {no:"Крок 4 з 8", title:"Статут товариства", role:"А",
+   lead:"Товариство діє або на підставі модельного статуту, затвердженого урядом, або на підставі власного статуту, який засновники складають самі."},
+  {no:"Крок 5 з 8", title:"Керівник і протокол зборів", role:"В",
+   lead:"Рішення про створення товариства ухвалюють загальні збори засновників і оформлюють протоколом. Там же призначають керівника."},
+  {no:"Крок 6 з 8", title:"Види діяльності та оподаткування", role:"В",
+   lead:"Від виду діяльності та кола клієнтів залежить, яку систему оподаткування може обрати товариство."},
+  {no:"Крок 7 з 8", title:"Кінцевий бенефіціарний власник", role:"Б",
+   lead:"Держава хоче знати, хто насправді стоїть за компанією. Разом із заявою подають структуру власності та відомості про кінцевого бенефіціарного власника."},
+  {no:"Крок 8 з 8", title:"Пакет документів і підписання", role:"усі",
+   lead:"Перевірте комплект документів. Зайвий документ реєстратор не прийме так само, як і відсутній."},
+];
+
+const ROLEHINT = {
+  "А":"Слово учаснику з карткою А.",
+  "Б":"Слово учаснику з карткою Б.",
+  "В":"Слово учаснику з карткою В (якщо вас двоє — тому, у кого ці дані є).",
+  "усі":"Потрібні дані з усіх карток одразу.",
+};
+
+const cur = () => window.TOVCASES.find(c => c.id === S.caseId);
+
+$("caseGrid").innerHTML = window.TOVCASES.map(c =>
+  `<button class="caseCard" data-id="${c.id}"><b>Команда ${c.id}. ${esc(c.short)}</b><span>${esc(c.title)}</span></button>`).join("");
+
+$("caseGrid").addEventListener("click", e => {
+  const b = e.target.closest(".caseCard"); if (!b) return;
+  const team = [$("m1").value, $("m2").value, $("m3").value].map(v => (v||"").trim()).filter(v => v.length > 2);
+  const gr = ($("sgroup").value||"").trim();
+  if (team.length < 2 || !gr) {
+    const m = $("msg0"); m.className = "msg warn";
+    m.textContent = "Впишіть прізвища щонайменше двох учасників команди та номер групи — без цього результат неможливо надіслати.";
+    window.scrollTo({top:0,behavior:"smooth"}); return;
+  }
+  S.team = team; S.sgroup = gr; S.started = Date.now();
+  S.caseId = +b.dataset.id; S.step = 0;
+  const k = keyOf(S.caseId);
+  S.founders = k.founders.map(f => ({ role:f.role, pib:"", birth:"", rnokpp:"", kind:"money", sum:"", what:"", valued:false }));
+  $("s0").classList.add("hidden"); $("steps").classList.remove("hidden");
+  render();
+});
+
+/* ---------- контрольний код ---------- */
+function checkCode(name, caseId, score){
+  const s = String(name).trim().toLowerCase().replace(/\s+/g," ") + "|" + caseId + "|" + score;
+  let h = 7;
+  for (let i=0;i<s.length;i++){ h = (h*31 + s.charCodeAt(i)) >>> 0; }
+  const A = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+  let out = "", x = h;
+  for (let i=0;i<4;i++){ out += A[x % A.length]; x = Math.floor(x / A.length); }
+  return out;
+}
+
+/* ---------- бали ---------- */
+const CAP = { name:1, founders:1, capital:2, statute:1, director:1, kved:2, tax:2, ubo:1, docs:1 };
+const lost = {};
+function penalty(key, text){
+  lost[key] = Math.min((lost[key]||0)+1, CAP[key]||1);
+  S.score = Math.max(0, 12 - Object.values(lost).reduce((a,b)=>a+b,0));
+  if (!S.errors.includes(key)) S.errors.push(key);
+  say("err", text);
+}
+function say(type, text){ const m=$("msg"); m.className="msg "+type; m.innerHTML=text; window.scrollTo({top:document.body.scrollHeight,behavior:"smooth"}); }
+
+/* ---------- частки ---------- */
+function shares(){
+  const cap = Number(S.capital) || 0;
+  return S.founders.map(f => cap ? +(Number(f.sum||0) / cap * 100).toFixed(2) : 0);
+}
+function fullName(){ return "Товариство з обмеженою відповідальністю «" + S.name + "»"; }
+function shortName(){ return "ТОВ «" + S.name + "»"; }
+
+/* ---------- екран ---------- */
+function render(){
+  const c = cur(), st = STEPS[S.step];
+  $("bar").innerHTML = STEPS.map((_,i)=>`<div class="${i<S.step?'done':i===S.step?'now':''}"></div>`).join("");
+  $("stepno").textContent = st.no; $("stepTitle").textContent = st.title; $("stepLead").textContent = st.lead;
+  $("caseBox").innerHTML = `<b>Команда ${c.id}. ${esc(c.title)}.</b> ${esc(c.idea)}`;
+  $("roleBox").innerHTML = `<b>Чия черга:</b> ${ROLEHINT[st.role]}`;
+  $("msg").className = "msg"; $("msg").textContent = "";
+  $("back").style.display = S.step === 0 ? "none" : "inline-block";
+  $("next").textContent = S.step === STEPS.length-1 ? "Підписати та подати документи" : "Далі";
+  $("stepBody").innerHTML = BODY[S.step](c);
+  if (S.step === 0) drawName();
+  if (S.step === 2) drawShares();
+  if (S.step === 3) toggleStatute();
+  if (S.step === 5) drawKved("");
+  window.scrollTo(0,0);
+}
+
+/* ---------- крок 1: найменування ---------- */
+function drawName(){
+  const v = ($("nameWord") && $("nameWord").value || "").trim();
+  const opf = (document.querySelector('input[name=opf]:checked')||{}).value || "";
+  const map = { tov:["Товариство з обмеженою відповідальністю","ТОВ"], pp:["Приватне підприємство","ПП"],
+                at:["Акціонерне товариство","АТ"], fop:["Фізична особа – підприємець","ФОП"] };
+  const box = $("namePreview"); if (!box) return;
+  if (!v || !opf) { box.innerHTML = "<span class='hint'>Оберіть форму й упишіть назву — тут з'явиться готове найменування.</span>"; return; }
+  const m = map[opf];
+  box.innerHTML = opf === "fop"
+    ? `<b>Повне найменування:</b> ${m[0]} (прізвище та ім'я)<br><span class="hint">У фізичної особи – підприємця власної назви в лапках не буває.</span>`
+    : `<b>Повне найменування:</b> ${m[0]} «${esc(v)}»<br><b>Скорочене:</b> ${m[1]} «${esc(v)}»`;
+}
+
+/* ---------- крок 3: частки ---------- */
+function drawShares(){
+  const box = $("sharesBox"); if (!box) return;
+  const cap = Number($("capital").value) || 0;
+  const sums = S.founders.map((f,i) => Number(($("sum"+i)||{}).value) || 0);
+  const total = sums.reduce((a,b)=>a+b,0);
+  const colors = ["#1B3A6B","#5B8C72","#c8922a"];
+  const rows = S.founders.map((f,i) => {
+    const p = cap ? (sums[i]/cap*100) : 0;
+    return `<tr><td>${esc(f.pib || ("Учасник " + f.role))}</td><td>${money(sums[i])}</td>
+      <td><b>${p.toFixed(2)}%</b></td></tr>`;
+  }).join("");
+  box.innerHTML = `<table><tr><th>Учасник</th><th>Вклад</th><th>Частка</th></tr>${rows}
+    <tr><th>Разом внесено</th><th>${money(total)}</th>
+    <th style="color:${total===cap&&cap>0?'#1b5e20':'#9b2226'}">${cap ? (total/cap*100).toFixed(2) : 0}%</th></tr></table>
+    <div class="shareBar">${S.founders.map((f,i)=>`<i style="width:${cap?(sums[i]/cap*100):0}%;background:${colors[i%3]}"></i>`).join("")}</div>
+    <p class="hint">Сума вкладів усіх учасників має дорівнювати оголошеному статутному капіталу, а разом частки — становити 100%.</p>`;
+}
+
+/* ---------- крок 4: конструктор статуту ---------- */
+function toggleStatute(){
+  const box = $("statuteBuilder"); if (!box) return;
+  const v = (document.querySelector('input[name=statute]:checked')||{}).value;
+  box.style.display = v === "own" ? "block" : "none";
+}
+
+/* ---------- крок 6: КВЕД ---------- */
+function drawKved(q=""){
+  const ml = $("kvedMainList"); if (!ml) return;
+  const f = KVED.filter(k => !q || (k.c+" "+k.t).toLowerCase().includes(q.toLowerCase()));
+  ml.innerHTML = f.map(k=>`<label><input type="radio" name="kvedMain" value="${k.c}" ${S.kvedMain===k.c?"checked":""}><code>${k.c}</code><span>${k.t}</span></label>`).join("")
+    || `<label>Нічого не знайдено</label>`;
+}
+
+document.addEventListener("input", e => {
+  if (e.target.id === "kvedSearch") drawKved(e.target.value);
+  if (e.target.id === "nameWord") drawName();
+  if (e.target.id === "capital" || /^sum\d+$/.test(e.target.id)) drawShares();
+});
+document.addEventListener("change", e => {
+  if (e.target.name === "opf") drawName();
+  if (e.target.name === "statute") toggleStatute();
+  if (e.target.name === "kvedMain") S.kvedMain = e.target.value;
+  if (/^kind\d+$/.test(e.target.id)) {
+    const i = +e.target.id.replace("kind","");
+    const w = $("what"+i), val = $("valuedWrap"+i);
+    if (w) w.style.display = e.target.value === "property" ? "block" : "none";
+    if (val) val.style.display = e.target.value === "property" ? "block" : "none";
+  }
+  if (e.target.name === "dir") {
+    const h = $("hiredWrap");
+    if (h) h.style.display = e.target.value === "hired" ? "block" : "none";
+  }
+  if (e.target.name === "tax") {
+    const h = $("vatWrap");
+    if (h) h.style.display = e.target.value === "0" ? "block" : "none";
+  }
+});
+
+/* ---------- вміст кроків ---------- */
+const BODY = [
+  () => `<h3>Організаційно-правова форма</h3>
+    ${[["tov","Товариство з обмеженою відповідальністю","Учасники не відповідають за зобов'язаннями товариства своїм майном — ризикують лише вкладами."],
+       ["pp","Приватне підприємство","Форма з давнього законодавства; для товариства кількох осіб із частками не підходить."],
+       ["at","Акціонерне товариство","Капітал поділено на акції; створення значно складніше й дорожче."],
+       ["fop","Фізична особа – підприємець","Це не юридична особа: спільної власності й часток не буває."]]
+      .map(([v,t,d])=>`<label class="opt"><input type="radio" name="opf" value="${v}" ${S.opf===v?"checked":""}><b>${t}</b><small>${d}</small></label>`).join("")}
+    <label for="nameWord">Власна назва (без лапок)</label>
+    <input type="text" id="nameWord" value="${esc(S.name)}" placeholder="назва з картки А">
+    <div class="hint">Дозволено літери, цифри, дефіс, апостроф. Назва має бути унікальною.</div>
+    <div class="casebox" id="namePreview"></div>`,
+
+  () => S.founders.map((f,i) => `<div class="person">
+      <h4>Учасник ${i+1} — картка ${f.role}</h4>
+      <div class="row">
+        <div><label for="pib${i}">Прізвище, ім'я, по батькові</label><input type="text" id="pib${i}" value="${esc(f.pib)}" placeholder="як у картці ${f.role}"></div>
+        <div style="flex:0 1 170px"><label for="birth${i}">Дата народження</label><input type="date" id="birth${i}" value="${esc(f.birth)}"></div>
+        <div style="flex:0 1 200px"><label for="rnokpp${i}">Податковий номер</label><input type="text" id="rnokpp${i}" maxlength="10" inputmode="numeric" value="${esc(f.rnokpp)}" placeholder="10 цифр"></div>
+      </div></div>`).join("") +
+    `<p class="hint">Податковий номер — це реєстраційний номер облікової картки платника податків, у побуті «ідентифікаційний код».</p>`,
+
+  () => `<label for="capital">Розмір статутного капіталу, грн</label>
+    <input type="number" id="capital" min="0" step="1000" value="${S.capital||''}" placeholder="сума з карток" style="max-width:260px">
+    <div class="hint">Закон не встановлює мінімального розміру: засновники визначають його самі.</div>
+    ${S.founders.map((f,i) => `<div class="person">
+      <h4>${esc(f.pib || ("Учасник " + f.role))} — картка ${f.role}</h4>
+      <div class="row">
+        <div style="flex:0 1 220px"><label for="kind${i}">Вид вкладу</label>
+          <select id="kind${i}"><option value="money" ${f.kind==="money"?"selected":""}>Гроші</option>
+          <option value="property" ${f.kind==="property"?"selected":""}>Майно</option></select></div>
+        <div style="flex:0 1 200px"><label for="sum${i}">Сума вкладу, грн</label>
+          <input type="number" id="sum${i}" min="0" step="1000" value="${esc(f.sum)}"></div>
+        <div id="what${i}" style="display:${f.kind==="property"?"block":"none"}"><label for="whatv${i}">Що саме вноситься</label>
+          <input type="text" id="whatv${i}" value="${esc(f.what)}" placeholder="обладнання, транспорт тощо"></div>
+      </div>
+      <div id="valuedWrap${i}" style="display:${f.kind==="property"?"block":"none"}">
+        <label class="opt"><input type="checkbox" id="valued${i}" ${f.valued?"checked":""}><b>Грошову оцінку майна затверджено одностайним рішенням усіх учасників</b>
+        <small>Майновий вклад приймається лише за оцінкою, з якою погодилися всі учасники без винятку.</small></label>
+      </div></div>`).join("")}
+    <div id="sharesBox"></div>`,
+
+  () => `<h3>На підставі якого статуту працюватиме товариство?</h3>
+    <label class="opt"><input type="radio" name="statute" value="model" ${S.statute==="model"?"checked":""}><b>Модельний статут</b>
+      <small>Типовий текст, затверджений Кабінетом Міністрів України. Його не складають і не подають: у заяві просто зазначають, що товариство діє на підставі модельного статуту. Швидко, але змінити під себе майже нічого не можна.</small></label>
+    <label class="opt"><input type="radio" name="statute" value="own" ${S.statute==="own"?"checked":""}><b>Власний статут</b>
+      <small>Засновники складають документ самі й затверджують його на зборах. Довше, зате можна встановити власні правила.</small></label>
+    <div id="statuteBuilder" style="display:none">
+      <h3>Конструктор статуту</h3>
+      <label for="organ">Виконавчий орган</label>
+      <select id="organ">
+        <option value="dir">Одноосібний — директор</option>
+        <option value="col">Колегіальний — дирекція на чолі з генеральним директором</option>
+      </select>
+      <div class="hint">Одноосібний орган простіший: один підпис, одна відповідальна особа.</div>
+      <label for="term">Строк внесення вкладів</label>
+      <select id="term">
+        <option value="6">Шість місяців з дня державної реєстрації (як у законі)</option>
+        <option value="3">Три місяці — жорсткіше, ніж вимагає закон</option>
+        <option value="12">Дванадцять місяців — м'якше, ніж у законі</option>
+      </select>
+      <div class="hint">Закон дозволяє встановити статутом інший строк, ніж шість місяців.</div>
+      <label for="profit">Розподіл прибутку</label>
+      <select id="profit">
+        <option value="year">Раз на рік за підсумками року</option>
+        <option value="quarter">Щокварталу</option>
+      </select>
+      <label for="pre">Переважне право купівлі частки учасника</label>
+      <select id="pre">
+        <option value="yes">Діє: спершу частку пропонують іншим учасникам</option>
+        <option value="no">Не застосовується: частку можна одразу продати сторонній особі</option>
+      </select>
+      <label for="ledger">Де ведеться облік часток</label>
+      <select id="ledger">
+        <option value="">— оберіть —</option>
+        <option value="edr">У Єдиному державному реєстрі</option>
+        <option value="ndu">В обліковій системі часток Національного депозитарію України</option>
+        <option value="none">Не зазначати в статуті</option>
+      </select>
+      <div class="hint">Відомості про облік часток належать до обов'язкового змісту статуту товариства.</div>
+    </div>`,
+
+  () => `<h3>Хто керуватиме товариством?</h3>
+    ${S.founders.map(f => `<label class="opt"><input type="radio" name="dir" value="${f.role}" ${S.director===f.role?"checked":""}><b>${esc(f.pib)}</b><small>Учасник товариства, картка ${f.role}</small></label>`).join("")}
+    <label class="opt"><input type="radio" name="dir" value="hired" ${S.director==="hired"?"checked":""}><b>Найманий керівник, який не є учасником</b>
+      <small>Так буває, коли власники не хочуть або не можуть керувати щодня.</small></label>
+    <div id="hiredWrap" style="display:${S.director==="hired"?"block":"none"}">
+      <div class="row">
+        <div><label for="hpib">Прізвище, ім'я, по батькові керівника</label><input type="text" id="hpib" value="${esc(S.hired.pib||"")}" placeholder="як у картці"></div>
+        <div style="flex:0 1 200px"><label for="hrnokpp">Податковий номер</label><input type="text" id="hrnokpp" maxlength="10" inputmode="numeric" value="${esc(S.hired.rnokpp||"")}"></div>
+      </div>
+    </div>
+    <h3>Протокол загальних зборів засновників</h3>
+    <div class="row">
+      <div style="flex:0 1 200px"><label for="mdate">Дата зборів</label><input type="date" id="mdate" value="${esc(S.meeting.date || new Date().toISOString().slice(0,10))}"></div>
+      <div><label for="chair">Головуючий на зборах</label><select id="chair">${S.founders.map(f=>`<option value="${esc(f.pib)}" ${S.meeting.chair===f.pib?"selected":""}>${esc(f.pib)}</option>`).join("")}</select></div>
+      <div><label for="secr">Секретар зборів</label><select id="secr">${S.founders.map(f=>`<option value="${esc(f.pib)}" ${S.meeting.secr===f.pib?"selected":""}>${esc(f.pib)}</option>`).join("")}</select></div>
+    </div>
+    <label for="addr">Місцезнаходження товариства</label>
+    <input type="text" id="addr" value="${esc(S.meeting.addr||"")}" placeholder="адреса з картки Б">
+    <div class="hint">Місцезнаходження — це адреса, за якою товариство отримує листи від державних органів.</div>`,
+
+  () => `<label for="kvedSearch">Пошук за кодом або назвою</label>
+    <input type="text" id="kvedSearch" placeholder="наприклад: виробництво, 49, меблі">
+    <h3>Основний вид діяльності</h3><div class="kvedList" id="kvedMainList"></div>
+    <h3>Система оподаткування</h3>
+    ${[["12","Перша або друга група єдиного податку","Ставки фіксовані й невеликі."],
+       ["5","Третя група єдиного податку, ставка 5% від доходу","Без реєстрації платником ПДВ. Ліміт доходу — 10 091 049 грн на рік (2026)."],
+       ["3","Третя група єдиного податку, ставка 3% від доходу","Лише разом із реєстрацією платником ПДВ. Той самий ліміт доходу."],
+       ["0","Загальна система: податок на прибуток 18%","Без обмежень доходу й видів діяльності, але складніший облік."]]
+      .map(([v,t,d])=>`<label class="opt"><input type="radio" name="tax" value="${v}" ${String(S.tax)===v?"checked":""}><b>${t}</b><small>${d}</small></label>`).join("")}
+    <div id="vatWrap" style="display:${String(S.tax)==="0"?"block":"none"}">
+      <h3>Реєстрація платником ПДВ</h3>
+      <label class="opt"><input type="radio" name="vat" value="yes"><b>Так, реєструємося платником ПДВ</b>
+        <small>Обов'язково, якщо обсяг операцій за останні 12 місяців перевищує 1 000 000 грн.</small></label>
+      <label class="opt"><input type="radio" name="vat" value="no"><b>Ні, платником ПДВ не реєструємося</b>
+        <small>Можливо лише доти, доки обсяг операцій не перевищив 1 000 000 грн.</small></label>
+    </div>`,
+
+  () => {
+    const sh = shares();
+    return `<h3>Хто є кінцевим бенефіціарним власником?</h3>
+    <p class="lead">Кінцевий бенефіціарний власник — це фізична особа, яка має вирішальний вплив на товариство. Найпростіша ознака: пряма участь понад 25% статутного капіталу.</p>
+    <table><tr><th>Учасник</th><th>Частка</th></tr>
+      ${S.founders.map((f,i)=>`<tr><td>${esc(f.pib)}</td><td>${sh[i].toFixed(2)}%</td></tr>`).join("")}</table>
+    ${S.founders.map((f,i)=>`<label class="opt"><input type="checkbox" name="ubo" value="${esc(f.pib)}"><b>${esc(f.pib)}</b><small>Частка ${sh[i].toFixed(2)}%</small></label>`).join("")}
+    ${S.director === "hired" ? `<label class="opt"><input type="checkbox" name="ubo" value="${esc(S.hired.pib||"керівник")}"><b>${esc(S.hired.pib||"Найманий керівник")}</b><small>Керівник товариства, часткою не володіє</small></label>` : ""}
+    <label class="opt"><input type="checkbox" name="ubo" value="__none__"><b>Кінцевого бенефіціарного власника немає</b>
+      <small>Так зазначають лише тоді, коли жодна фізична особа не має вирішального впливу.</small></label>`;
+  },
+
+  () => `<h3>Що подаємо державному реєстраторові</h3>
+    ${[["f2","Заява щодо державної реєстрації юридичної особи (форма 2)",true],
+       ["prot","Протокол (рішення) загальних зборів засновників",true],
+       ["stat", S.statute==="own" ? "Статут товариства у двох примірниках" : "Відмітка в заяві про діяльність на підставі модельного статуту", true],
+       ["own","Структура власності за формою Міністерства фінансів України",true],
+       ["ubo","Відомості про кінцевого бенефіціарного власника",true],
+       ["fee","Квитанція про сплату адміністративного збору",false],
+       ["bank","Довідка банку про внесення статутного капіталу",false],
+       ["lic","Ліцензія на здійснення діяльності",false]]
+      .map(([v,t])=>`<label class="opt"><input type="checkbox" name="doc" value="${v}"><b>${t}</b></label>`).join("")}
+    <h3>Підписання</h3>
+    <p class="lead">Документи підписує кваліфікованим електронним підписом керівник товариства.</p>
+    <label for="pin">Код підпису (будь-які 5 цифр — це імітація)</label>
+    <input type="text" id="pin" inputmode="numeric" maxlength="5" placeholder="•••••" style="max-width:160px">`,
+];
+
+/* ---------- перевірки ---------- */
+const CHECK = [
+  c => {
+    const k = keyOf(c.id);
+    const word = ($("nameWord").value||"").trim().replace(/\s+/g," ");
+    const opf = (document.querySelector('input[name=opf]:checked')||{}).value;
+    if (!opf || !word) { say("warn","Оберіть організаційно-правову форму й упишіть назву."); return false; }
+    if (opf !== "tov") {
+      penalty("name","За завданням створюється саме товариство з обмеженою відповідальністю: кілька засновників, капітал поділено на частки, а учасники ризикують лише вкладами. Обрана форма цим умовам не відповідає.");
+      return false;
+    }
+    const norm = s => s.toLowerCase().replace(/[«»"']/g,"").trim();
+    if (window.TAKEN.some(t => norm(t) === norm(word))) {
+      penalty("name","Реєстратор відмовив: найменування «" + esc(word) + "» уже є в реєстрі. Тотожні найменування юридичних осіб не допускаються — візьміть запасний варіант назви з картки А.");
+      return false;
+    }
+    if (!k.names.some(n => norm(n) === norm(word))) {
+      say("warn","Такої назви немає в картці А. Упишіть одну з двох назв, які запропонували засновники."); return false;
+    }
+    S.name = word; S.opf = opf; return true;
+  },
+
+  c => {
+    const k = keyOf(c.id);
+    const vals = S.founders.map((f,i) => ({
+      role:f.role,
+      pib: ($("pib"+i).value||"").trim().replace(/\s+/g," "),
+      birth: $("birth"+i).value,
+      rnokpp: ($("rnokpp"+i).value||"").trim(),
+    }));
+    if (vals.some(v => !v.pib || !v.birth || !v.rnokpp)) { say("warn","Заповніть дані всіх учасників — кожен диктує свої з власної картки."); return false; }
+    for (const v of vals) {
+      if (!/^\d{10}$/.test(v.rnokpp)) { penalty("founders","Податковий номер складається рівно з 10 цифр. Перевірте картку " + v.role + "."); return false; }
+      const age = Math.floor((Date.now() - new Date(v.birth)) / 31557600000);
+      if (age < 18) { penalty("founders","Засновником товариства може бути особа з повною цивільною дієздатністю, тобто від 18 років. Перевірте дату народження в картці " + v.role + "."); return false; }
+    }
+    const set = new Set(vals.map(v=>v.rnokpp));
+    if (set.size !== vals.length) { penalty("founders","Податкові номери учасників збіглися — це різні люди, номери в них теж різні. Перевірте картки."); return false; }
+    const wrong = vals.filter(v => { const f = k.founders.find(x => x.role === v.role); return f.rnokpp !== v.rnokpp; });
+    if (wrong.length) { penalty("founders","Дані учасника з картки " + wrong[0].role + " не збігаються з карткою: перевірте податковий номер."); return false; }
+    vals.forEach((v,i) => Object.assign(S.founders[i], v));
+    return true;
+  },
+
+  c => {
+    const k = keyOf(c.id);
+    const cap = Number($("capital").value) || 0;
+    if (!cap) { say("warn","Укажіть розмір статутного капіталу."); return false; }
+    const data = S.founders.map((f,i) => ({
+      kind: $("kind"+i).value,
+      sum: Number($("sum"+i).value) || 0,
+      what: ($("whatv"+i) ? $("whatv"+i).value : "").trim(),
+      valued: $("valued"+i) ? $("valued"+i).checked : false,
+    }));
+    if (data.some(d => !d.sum)) { say("warn","Укажіть суму вкладу кожного учасника."); return false; }
+    const total = data.reduce((a,d)=>a+d.sum,0);
+    if (total !== cap) {
+      penalty("capital","Сума вкладів (" + money(total) + ") не дорівнює оголошеному статутному капіталу (" + money(cap) + "). Статутний капітал складається саме з вкладів учасників, тому ці числа мають збігатися.");
+      return false;
+    }
+    const badKind = data.some((d,i) => d.kind !== k.founders[i].kind);
+    if (badKind) { penalty("capital","Вид вкладу когось із учасників не збігається з карткою: хтось вносить гроші, а хтось — майно. Перевірте картки."); return false; }
+    const propNoValue = data.findIndex(d => d.kind === "property" && !d.valued);
+    if (propNoValue >= 0) {
+      penalty("capital","Майновий вклад приймається лише за грошовою оцінкою, яку одностайно затвердили всі учасники. Без цього рішення внести обладнання до капіталу не можна.");
+      return false;
+    }
+    const propNoWhat = data.findIndex(d => d.kind === "property" && !d.what);
+    if (propNoWhat >= 0) { say("warn","Напишіть, яке саме майно вноситься до статутного капіталу."); return false; }
+    S.capital = cap;
+    data.forEach((d,i) => Object.assign(S.founders[i], d));
+    return true;
+  },
+
+  () => {
+    const v = (document.querySelector('input[name=statute]:checked')||{}).value;
+    if (!v) { say("warn","Оберіть, на підставі якого статуту діятиме товариство."); return false; }
+    S.statute = v;
+    if (v === "own") {
+      const ledger = $("ledger").value;
+      if (!ledger) { say("warn","Оберіть, де вестиметься облік часток."); return false; }
+      if (ledger === "none") {
+        penalty("statute","Статут не можна залишити без цього пункту: відомості про порядок обліку часток належать до обов'язкового змісту статуту товариства з обмеженою відповідальністю.");
+        return false;
+      }
+      S.statuteOpts = { organ:$("organ").value, term:$("term").value, profit:$("profit").value,
+                        pre:$("pre").value, ledger };
+    } else {
+      S.statuteOpts = { organ:"dir", term:"6", profit:"year", pre:"yes", ledger:"edr" };
+    }
+    return true;
+  },
+
+  c => {
+    const k = keyOf(c.id);
+    const v = (document.querySelector('input[name=dir]:checked')||{}).value;
+    if (!v) { say("warn","Оберіть керівника товариства."); return false; }
+    const addr = ($("addr").value||"").trim();
+    if (!addr) { say("warn","Упишіть місцезнаходження товариства — адресу з картки Б."); return false; }
+    if (v === "hired") {
+      const hp = ($("hpib").value||"").trim(), hr = ($("hrnokpp").value||"").trim();
+      if (!hp || !/^\d{10}$/.test(hr)) { say("warn","Упишіть прізвище та десятизначний податковий номер найманого керівника."); return false; }
+      S.hired = { pib:hp, rnokpp:hr };
+    }
+    if (v !== k.director) {
+      penalty("director", k.director === "hired"
+        ? "За рішенням засновників керувати товариством має найманий директор, а не хтось із учасників. Перечитайте картку В."
+        : "Керівником призначено не ту особу, яку визначили засновники. Перечитайте картку В.");
+      return false;
+    }
+    const chair = $("chair").value, secr = $("secr").value;
+    if (S.founders.length > 1 && chair === secr) { say("warn","Головуючий і секретар зборів — різні особи: один веде збори, інший записує рішення."); return false; }
+    S.director = v;
+    S.meeting = { date:$("mdate").value, chair, secr, addr };
+    return true;
+  },
+
+  c => {
+    const k = keyOf(c.id);
+    if (!S.kvedMain) { say("warn","Оберіть основний вид діяльності."); return false; }
+    if (S.kvedMain !== k.kved) {
+      penalty("kved","Обраний код не відповідає діяльності товариства. Основним є той вид діяльності, яким товариство займатиметься переважно. " + k.kvedWhy);
+      return false;
+    }
+    const t = (document.querySelector('input[name=tax]:checked')||{}).value;
+    if (!t) { say("warn","Оберіть систему оподаткування."); return false; }
+    if (t === "12") {
+      penalty("tax","Перша й друга групи єдиного податку доступні тільки фізичним особам – підприємцям. Юридична особа може бути лише в третій групі або на загальній системі.");
+      return false;
+    }
+    if (+t !== k.tax) { penalty("tax","Ця система не підходить до умов завдання. " + k.taxWhy); return false; }
+    let vat = (k.tax === 3);
+    if (t === "0") {
+      const vv = (document.querySelector('input[name=vat]:checked')||{}).value;
+      if (!vv) { say("warn","Визначте, чи реєструється товариство платником ПДВ."); return false; }
+      vat = (vv === "yes");
+      if (vat !== k.vat) { penalty("tax","Рішення щодо ПДВ помилкове. " + k.vatWhy); return false; }
+    }
+    S.tax = +t; S.vat = vat;
+    return true;
+  },
+
+  c => {
+    const k = keyOf(c.id);
+    const picked = [...document.querySelectorAll('input[name=ubo]:checked')].map(i=>i.value);
+    if (!picked.length) { say("warn","Позначте, хто є кінцевим бенефіціарним власником."); return false; }
+    if (picked.includes("__none__")) {
+      penalty("ubo","Кінцевий бенефіціарний власник тут є: частками володіють фізичні особи, і принаймні одна з них має понад 25%. " + k.uboWhy);
+      return false;
+    }
+    const want = k.ubo.slice().sort().join("|");
+    const got = picked.slice().sort().join("|");
+    if (want !== got) { penalty("ubo","Перелік визначено неправильно. " + k.uboWhy); return false; }
+    S.ubo = picked;
+    return true;
+  },
+
+  () => {
+    const picked = [...document.querySelectorAll('input[name=doc]:checked')].map(i=>i.value);
+    const need = ["f2","prot","stat","own","ubo"];
+    const extra = picked.filter(p => !need.includes(p));
+    const miss = need.filter(n => !picked.includes(n));
+    if (extra.includes("fee")) {
+      penalty("docs","За державну реєстрацію створення юридичної особи адміністративний збір не справляється, тому квитанції про сплату не існує.");
+      return false;
+    }
+    if (extra.includes("bank")) {
+      penalty("docs","Довідка про внесення статутного капіталу при реєстрації не подається: закон дає учасникам шість місяців після реєстрації, щоб внести вклади.");
+      return false;
+    }
+    if (extra.includes("lic")) {
+      penalty("docs","Ліцензія отримується вже після реєстрації товариства й державному реєстраторові не подається.");
+      return false;
+    }
+    if (miss.length) {
+      const names = { f2:"заява форми 2", prot:"протокол (рішення) зборів", stat:"статут або відмітка про модельний статут",
+                      own:"структура власності", ubo:"відомості про кінцевого бенефіціарного власника" };
+      penalty("docs","Пакет неповний — бракує таких документів: " + miss.map(m=>names[m]).join(", ") + ". Реєстратор не прийме документи частинами.");
+      return false;
+    }
+    const pin = ($("pin").value||"").trim();
+    if (!/^\d{5}$/.test(pin)) { say("warn","Введіть п'ятизначний код підпису."); return false; }
+    return true;
+  },
+];
+
+$("back").onclick = () => { if (S.step>0){ S.step--; render(); } };
+$("next").onclick = () => { if (CHECK[S.step](cur())) { if (S.step===STEPS.length-1) finish(); else { S.step++; render(); } } };
+
+/* ---------- документи ---------- */
+const UA_DATE = d => { const [y,m,dd] = String(d).split("-"); return dd + "." + m + "." + y; };
+
+function statuteHtml(){
+  const o = S.statuteOpts, sh = shares();
+  const organ = o.organ === "col"
+    ? "Виконавчим органом Товариства є дирекція на чолі з генеральним директором."
+    : "Виконавчим органом Товариства є директор.";
+  const ledger = o.ledger === "ndu"
+    ? "Облік часток учасників Товариства ведеться в обліковій системі часток Національного депозитарію України."
+    : "Облік часток учасників Товариства ведеться в Єдиному державному реєстрі юридичних осіб, фізичних осіб – підприємців та громадських формувань.";
+  const pre = o.pre === "yes"
+    ? "Учасник, який має намір продати свою частку третій особі, зобов'язаний письмово повідомити про це інших учасників: вони мають переважне право купити цю частку за ціною та на умовах, повідомлених продавцем."
+    : "Переважне право учасників на придбання частки, що продається третій особі, статутом не застосовується.";
+  const profit = o.profit === "quarter"
+    ? "Прибуток Товариства розподіляється між учасниками щокварталу пропорційно до розмірів їхніх часток."
+    : "Прибуток Товариства розподіляється між учасниками раз на рік за підсумками фінансового року пропорційно до розмірів їхніх часток.";
+  const k = KVED.find(x=>x.c===S.kvedMain) || {c:"",t:""};
+  return `<div class="doc">
+    <p class="ctr">ЗАТВЕРДЖЕНО<br>протоколом загальних зборів засновників<br>від ${UA_DATE(S.meeting.date)} № 1</p>
+    <h5>Статут</h5>
+    <p class="ctr"><b>${esc(fullName())}</b><br>м. Сторожинець — ${new Date(S.meeting.date).getFullYear()} рік</p>
+    <p class="sec">1. Загальні положення</p>
+    <p>1.1. ${esc(fullName())} (далі — Товариство) створене за рішенням загальних зборів засновників і діє відповідно до Цивільного кодексу України, Закону України «Про товариства з обмеженою та додатковою відповідальністю» та цього Статуту.</p>
+    <p>1.2. Найменування Товариства: повне — ${esc(fullName())}; скорочене — ${esc(shortName())}.</p>
+    <p>1.3. Місцезнаходження Товариства: ${esc(S.meeting.addr)}.</p>
+    <p>1.4. Товариство є юридичною особою з дня його державної реєстрації, має самостійний баланс, рахунки в банках і печатку (за рішенням Товариства).</p>
+    <p class="sec">2. Мета та види діяльності</p>
+    <p>2.1. Товариство створюється з метою здійснення підприємницької діяльності та одержання прибутку.</p>
+    <p>2.2. Основний вид діяльності: ${esc(k.c)} — ${esc(k.t)}. Товариство може здійснювати й інші види діяльності, не заборонені законом, а ті, що підлягають ліцензуванню, — після одержання ліцензії.</p>
+    <p class="sec">3. Учасники Товариства</p>
+    ${S.founders.map((f,i)=>`<p>3.${i+1}. ${esc(f.pib)}, частка — ${sh[i].toFixed(2)}% статутного капіталу номінальною вартістю ${money(f.sum)}.</p>`).join("")}
+    <p>3.${S.founders.length+1}. Учасники не відповідають за зобов'язаннями Товариства. Учасники, які не повністю внесли вклади, несуть солідарну відповідальність за зобов'язаннями Товариства в межах вартості невнесеної частини вкладу.</p>
+    <p class="sec">4. Статутний капітал</p>
+    <p>4.1. Статутний капітал Товариства становить ${money(S.capital)} і поділений на частки учасників.</p>
+    <p>4.2. Вклади вносяться: ${S.founders.map(f=>esc(f.pib) + " — " + (f.kind==="property" ? "майном (" + esc(f.what) + ")" : "грошовими коштами") + " на суму " + money(f.sum)).join("; ")}.</p>
+    <p>4.3. Кожен учасник зобов'язаний повністю внести свій вклад протягом ${o.term === "6" ? "шести" : o.term === "3" ? "трьох" : "дванадцяти"} місяців з дати державної реєстрації Товариства.</p>
+    <p>4.4. Грошова оцінка вкладу в негрошовій формі затверджується одностайним рішенням загальних зборів учасників, у якому взяли участь усі учасники Товариства.</p>
+    <p class="sec">5. Органи управління</p>
+    <p>5.1. Вищим органом Товариства є загальні збори учасників. Кожен учасник має кількість голосів, пропорційну до розміру його частки.</p>
+    <p>5.2. До компетенції загальних зборів належать: внесення змін до статуту, зміна розміру статутного капіталу, обрання та відкликання керівника, затвердження результатів діяльності та розподіл прибутку, реорганізація і ліквідація Товариства.</p>
+    <p>5.3. ${organ} Керівник підзвітний загальним зборам, діє без довіреності від імені Товариства, укладає договори та видає накази.</p>
+    <p class="sec">6. Вступ до Товариства та вихід із нього</p>
+    <p>6.1. Учасник, частка якого у статутному капіталі становить менше 50%, може вийти з Товариства в будь-який час без згоди інших учасників.</p>
+    <p>6.2. Учасник, частка якого становить 50% і більше, може вийти з Товариства за згодою інших учасників.</p>
+    <p>6.3. ${pre}</p>
+    <p>6.4. Товариству, яке отримало заяву про вихід, належить виплатити учасникові вартість його частки в порядку та строки, встановлені законом.</p>
+    <p class="sec">7. Розподіл прибутку</p>
+    <p>7.1. ${profit}</p>
+    <p>7.2. Виплата дивідендів не здійснюється, якщо це заборонено законом, зокрема доки учасники не внесли свої вклади в повному обсязі.</p>
+    <p class="sec">8. Облік часток та документи Товариства</p>
+    <p>8.1. ${ledger}</p>
+    <p>8.2. Товариство зберігає статут, протоколи загальних зборів, документи бухгалтерського обліку та звітність у порядку, встановленому законом.</p>
+    <p class="sec">9. Припинення Товариства</p>
+    <p>9.1. Товариство припиняється внаслідок реорганізації або ліквідації за рішенням загальних зборів чи за рішенням суду у випадках, передбачених законом.</p>
+    <p class="sec">10. Прикінцеві положення</p>
+    <p>10.1. Зміни до цього Статуту вносяться за рішенням загальних зборів учасників і підлягають державній реєстрації.</p>
+    <p style="margin-top:18px"><b>Підписи засновників:</b></p>
+    ${S.founders.map(f=>`<p class="sign"><span>${esc(f.pib)}</span><span>_________________</span></p>`).join("")}
+    <p class="hint" style="margin-top:14px">Навчальний документ. Створений тренажером, юридичної сили не має.</p>
+  </div>`;
+}
+
+function protocolHtml(){
+  const sh = shares();
+  const dirName = S.director === "hired" ? (S.hired.pib||"") : (S.founders.find(f=>f.role===S.director)||{}).pib;
+  const taxText = S.tax === 0
+    ? "загальна система оподаткування зі сплатою податку на прибуток" + (S.vat ? " та реєстрація платником податку на додану вартість" : "")
+    : "спрощена система оподаткування, третя група, ставка " + (S.tax === 3 ? "3% доходу з реєстрацією платником податку на додану вартість" : "5% доходу");
+  return `<div class="doc">
+    <h5>Протокол № 1</h5>
+    <p class="ctr">загальних зборів засновників<br><b>${esc(fullName())}</b></p>
+    <p class="ctr">${esc(S.meeting.addr)} · ${UA_DATE(S.meeting.date)}</p>
+    <p><b>Присутні засновники:</b></p>
+    ${S.founders.map((f,i)=>`<p>${i+1}. ${esc(f.pib)} — ${sh[i].toFixed(2)}% голосів.</p>`).join("")}
+    <p>Збори правомочні: присутні засновники, яким належить 100% голосів.</p>
+    <p>Головуючий на зборах — ${esc(S.meeting.chair)}. Секретар зборів — ${esc(S.meeting.secr)}.</p>
+    <p class="sec">Порядок денний</p>
+    <p>1. Про створення товариства з обмеженою відповідальністю та його найменування.<br>
+       2. Про затвердження статуту товариства.<br>
+       3. Про розмір статутного капіталу, вклади учасників та їхні частки.<br>
+       4. Про визначення місцезнаходження товариства.<br>
+       5. Про обрання керівника товариства.<br>
+       6. Про обрання системи оподаткування.<br>
+       7. Про уповноваження на подання документів для державної реєстрації.</p>
+    <p class="sec">Ухвалили</p>
+    <p>1. Створити ${esc(fullName())}, скорочене найменування — ${esc(shortName())}.</p>
+    <p>2. ${S.statute === "own"
+      ? "Затвердити статут Товариства в новій редакції, що додається до цього протоколу."
+      : "Встановити, що Товариство діє на підставі модельного статуту, затвердженого Кабінетом Міністрів України."}</p>
+    <p>3. Встановити статутний капітал у розмірі ${money(S.capital)} з такими вкладами учасників: ${S.founders.map((f,i)=>esc(f.pib) + " — " + money(f.sum) + " (" + sh[i].toFixed(2) + "%)").join("; ")}. ${S.founders.some(f=>f.kind==="property") ? "Затвердити грошову оцінку майнових вкладів одностайним рішенням усіх учасників." : ""}</p>
+    <p>4. Визначити місцезнаходження Товариства: ${esc(S.meeting.addr)}.</p>
+    <p>5. Обрати керівником Товариства ${esc(dirName)}${S.director === "hired" ? " (не є учасником Товариства)" : ""} та уповноважити його діяти від імені Товариства без довіреності.</p>
+    <p>6. Обрати ${taxText}.</p>
+    <p>7. Уповноважити ${esc(dirName)} підписати та подати державному реєстраторові документи для державної реєстрації Товариства.</p>
+    <p>Голосували «за» — одностайно.</p>
+    <p style="margin-top:18px" class="sign"><span>Головуючий на зборах: ${esc(S.meeting.chair)}</span><span>_________________</span></p>
+    <p class="sign"><span>Секретар зборів: ${esc(S.meeting.secr)}</span><span>_________________</span></p>
+    <p class="hint" style="margin-top:14px">Навчальний документ. Створений тренажером, юридичної сили не має.</p>
+  </div>`;
+}
+
+/* ---------- надсилання результату ---------- */
+let sendSeq = 0;
+function sendResult(payload, done){
+  const cfg = window.TRAINER_CONFIG || {};
+  if (!cfg.endpoint) { done(false, "Адресу сервера не налаштовано — покажіть викладачеві контрольний код."); return; }
+  const cb = "cb" + (++sendSeq) + "_" + Date.now();
+  const timer = setTimeout(() => { cleanup(); done(false, "Сервер не відповів. Перевірте інтернет і натисніть «Надіслати ще раз»."); }, 12000);
+  function cleanup(){ clearTimeout(timer); delete window[cb]; if (s.parentNode) s.parentNode.removeChild(s); }
+  window[cb] = res => { cleanup(); done(!!(res && res.ok), res && res.error ? res.error : ""); };
+  const q = Object.entries({...payload, mod:"ТОВ", l:cfg.lesson||"", action:"save", token:cfg.writeToken||"", callback:cb})
+    .map(([k,v]) => encodeURIComponent(k)+"="+encodeURIComponent(v)).join("&");
+  const s = document.createElement("script");
+  s.src = cfg.endpoint + (cfg.endpoint.includes("?") ? "&" : "?") + q;
+  s.onerror = () => { cleanup(); done(false,
+    "Не вдалося з'єднатися із сервером — запишіть контрольний код і покажіть його викладачеві."); };
+  document.body.appendChild(s);
+}
+
+/* ---------- фінал ---------- */
+function finish(){
+  const c = cur(), k = keyOf(c.id), sh = shares();
+  const teamStr = S.team.join(", ");
+  const code = checkCode(S.team[0], c.id, S.score);
+  const mins = Math.max(1, Math.round((Date.now() - S.started)/60000));
+  const edrpou = String(40000000 + c.id*1000 + Math.floor(Math.random()*900+100));
+  const today = new Date().toLocaleDateString("uk-UA");
+  const lvl = S.score>=10?"високий":S.score>=7?"достатній":S.score>=4?"середній":"початковий";
+  const dirName = S.director === "hired" ? S.hired.pib : (S.founders.find(f=>f.role===S.director)||{}).pib;
+  const kv = KVED.find(x=>x.c===S.kvedMain) || {c:"",t:""};
+  const taxText = S.tax === 0 ? "загальна система, податок на прибуток 18%"
+    : S.tax === 3 ? "єдиний податок, третя група, 3% доходу" : "єдиний податок, третя група, 5% доходу";
+  const names = { name:"найменування", founders:"дані учасників", capital:"капітал і вклади",
+                  statute:"статут", director:"керівник і протокол", kved:"вид діяльності",
+                  tax:"система оподаткування", ubo:"бенефіціарний власник", docs:"пакет документів" };
+  const mistakes = S.errors.length
+    ? `<p>Команда виправила помилки на таких кроках: ${S.errors.map(e=>names[e]).join(", ")}. За кожну знято бали.</p>`
+    : `<p>Помилок не допущено — усі рішення були правильними з першого разу.</p>`;
+
+  $("steps").classList.add("hidden"); $("result").classList.remove("hidden");
+  $("resultCard").innerHTML = `
+    <h2>Товариство зареєстровано в навчальному реєстрі</h2>
+    <p class="lead noprint">У справжній процедурі запис у Єдиному державному реєстрі з'являється протягом 24 годин, а адміністративний збір за реєстрацію створення юридичної особи не справляється.</p>
+    <div class="msg ok" style="display:block"><b>Результат команди: ${S.score} з 12 балів</b> — ${lvl} рівень. ${mistakes}</div>
+    <div class="msg" id="sendMsg"></div>
+    <div class="extract">
+      <div class="stamp">НАВЧАЛЬНИЙ<br>ДОКУМЕНТ</div>
+      <h4>Витяг із навчального реєстру юридичних осіб</h4>
+      <p class="hint">Документ сформовано тренажером і юридичної сили не має</p>
+      <table>
+        <tr><th>Команда, група</th><td><b>${esc(teamStr)}</b>, ${esc(S.sgroup)}</td></tr>
+        <tr><th>Завдання</th><td>№ ${c.id} — ${esc(c.short)}</td></tr>
+        <tr><th>Повне найменування</th><td><b>${esc(fullName())}</b></td></tr>
+        <tr><th>Скорочене найменування</th><td>${esc(shortName())}</td></tr>
+        <tr><th>Код ЄДРПОУ (навчальний)</th><td>${edrpou}</td></tr>
+        <tr><th>Дата запису</th><td>${today}</td></tr>
+        <tr><th>Місцезнаходження</th><td>${esc(S.meeting.addr)}</td></tr>
+        <tr><th>Статутний капітал</th><td>${money(S.capital)}</td></tr>
+        <tr><th>Учасники та частки</th><td>${S.founders.map((f,i)=>esc(f.pib) + " — " + sh[i].toFixed(2) + "%").join("<br>")}</td></tr>
+        <tr><th>Керівник</th><td>${esc(dirName)}${S.director==="hired"?" (не є учасником)":""}</td></tr>
+        <tr><th>Установчий документ</th><td>${S.statute==="own" ? "власний статут" : "модельний статут"}</td></tr>
+        <tr><th>Основний вид діяльності</th><td>${esc(kv.c)} — ${esc(kv.t)}</td></tr>
+        <tr><th>Система оподаткування</th><td>${taxText}${S.vat ? "; платник ПДВ" : ""}</td></tr>
+        <tr><th>Кінцевий бенефіціарний власник</th><td>${S.ubo.map(esc).join("<br>")}</td></tr>
+        <tr><th>Час роботи</th><td>${mins} хв</td></tr>
+        <tr><th>Бал за роботу</th><td><b>${S.score} з 12</b></td></tr>
+      </table>
+      <p style="margin-top:12px">Контрольний код: <span class="code">${code}</span></p>
+      <p class="hint">Якщо результат не надіслався, назвіть викладачеві цей код і прізвище учасника з карткою А — за ними він перевірить бал команди.</p>
+    </div>
+    <div class="actions noprint">
+      <button class="btn" id="resend">Надіслати ще раз</button>
+      <button class="btn2" onclick="window.print()">Роздрукувати все</button>
+      <button class="btn2" onclick="location.reload()">Пройти ще раз</button>
+    </div>
+    <div class="noprint">
+      <h3>Що перевіряло завдання</h3>
+      <p><b>Вид діяльності.</b> ${esc(k.kvedWhy)}</p>
+      <p><b>Система оподаткування.</b> ${esc(k.taxWhy)}</p>
+      <p><b>ПДВ.</b> ${esc(k.vatWhy)}</p>
+      <p><b>Кінцевий бенефіціарний власник.</b> ${esc(k.uboWhy)}</p>
+      <p><b>Документи.</b> Подаються заява форми 2, протокол зборів, статут (або відмітка про модельний), структура власності та відомості про бенефіціарного власника. Адміністративний збір за створення не сплачується, довідка банку та ліцензія на цьому етапі не потрібні.</p>
+    </div>`;
+
+  $("docs").innerHTML = `<div class="card noprint"><h2>Документи товариства</h2>
+      <p class="lead">Нижче — документи, які сформував тренажер за вашими рішеннями. Роздрукуйте їх або перепишіть ключові положення й здайте разом із заявою.</p></div>`
+    + (S.statute === "own" ? statuteHtml() : `<div class="card"><h2>Статут</h2><p>Товариство діє на підставі модельного статуту, затвердженого Кабінетом Міністрів України. Власний статут не складається й державному реєстраторові не подається — у заяві робиться відповідна відмітка.</p></div>`)
+    + protocolHtml();
+
+  const payload = { n:teamStr, g:S.sgroup, c:c.id, s:S.score, k:code, m:mins,
+                    kv:S.kvedMain, gr:S.tax, e:S.errors.join("|") };
+  const post = () => {
+    const box = $("sendMsg"), btn = $("resend");
+    box.className = "msg warn"; box.textContent = "Надсилаємо результат викладачеві…";
+    if (btn) btn.disabled = true;
+    sendResult(payload, (ok, err) => {
+      box.className = "msg " + (ok ? "ok" : "err");
+      box.innerHTML = ok ? "Результат надіслано викладачеві. Можете закривати сторінку."
+                         : "Не вдалося надіслати результат. " + err;
+      if (btn) btn.disabled = false;
+    });
+  };
+  $("resend").onclick = post;
+  post();
+  window.scrollTo(0,0);
+}
+</script>
+</body>
+</html>

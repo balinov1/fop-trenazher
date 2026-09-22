@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Навчальний тренажер: реєстрація ФОП</title>
+<style>
+  :root{
+    --navy:#1B3A6B; --green:#5B8C72; --dgreen:#1B5E20;
+    --ink:#1c2430; --muted:#5b6673; --line:#d8dee7;
+    --bg:#f4f6f9; --card:#ffffff; --warn:#8a6d00; --warnbg:#fff7dd;
+    --err:#9b2226; --errbg:#fdecec; --okbg:#e8f5e9;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font:16px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;}
+  .wrap{max-width:860px;margin:0 auto;padding:0 16px 48px}
+  header{background:var(--navy);color:#fff;padding:14px 0 12px}
+  header .wrap{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between}
+  .brand{font-weight:700;font-size:17px}
+  .brand small{display:block;font-weight:400;font-size:12px;opacity:.85}
+  .badge{background:#fff3cd;color:#6b4e00;border:1px solid #e0c97a;border-radius:999px;
+    padding:5px 12px;font-size:12px;font-weight:700;white-space:nowrap}
+  .notice{background:var(--warnbg);border-bottom:1px solid #e8dba6;color:#6b5600;font-size:13px;padding:8px 0}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px;margin-top:16px}
+  h1{font-size:22px;margin:18px 0 6px;color:var(--navy)}
+  h2{font-size:19px;margin:0 0 4px;color:var(--navy)}
+  h3{font-size:15px;margin:18px 0 8px;color:var(--dgreen);text-transform:uppercase;letter-spacing:.4px}
+  p{margin:8px 0}
+  .lead{color:var(--muted)}
+  .steps{display:flex;gap:6px;margin-top:14px;flex-wrap:wrap}
+  .steps div{flex:1 1 60px;height:6px;border-radius:99px;background:#dde3ea}
+  .steps div.done{background:var(--green)} .steps div.now{background:var(--navy)}
+  .stepno{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;font-weight:700}
+  label{display:block;font-size:14px;font-weight:600;margin:14px 0 5px}
+  input[type=text],input[type=date],input[type=email],input[type=tel],select{
+    width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:8px;font-size:16px;
+    font-family:inherit;background:#fff;color:var(--ink)}
+  input:focus,select:focus{outline:2px solid var(--navy);outline-offset:1px}
+  .hint{font-size:13px;color:var(--muted);margin-top:4px}
+  .row{display:flex;gap:12px;flex-wrap:wrap}
+  .row>*{flex:1 1 220px}
+  button{font:inherit;cursor:pointer;border-radius:8px;border:1px solid transparent;padding:12px 18px;font-weight:600}
+  .btn{background:var(--navy);color:#fff} .btn:hover{background:#16305a}
+  .btn:disabled{background:#93a2b8;cursor:default}
+  .btn2{background:#fff;color:var(--navy);border-color:var(--line)} .btn2:hover{background:#eef2f7}
+  .actions{display:flex;gap:10px;margin-top:22px;flex-wrap:wrap}
+  .caseGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px;margin-top:14px}
+  .caseCard{border:1px solid var(--line);border-radius:10px;padding:14px;background:#fff;cursor:pointer;text-align:left}
+  .caseCard:hover{border-color:var(--navy);background:#f7f9fc}
+  .caseCard b{display:block;color:var(--navy);margin-bottom:4px} .caseCard span{font-size:13px;color:var(--muted)}
+  .casebox{background:#f0f4f9;border-left:4px solid var(--navy);border-radius:0 8px 8px 0;padding:12px 14px;margin:14px 0;font-size:14px}
+  .casebox b{color:var(--navy)}
+  .opt{display:block;border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-top:10px;cursor:pointer;background:#fff}
+  .opt:hover{background:#f7f9fc} .opt input{margin-right:8px} .opt b{color:var(--navy)}
+  .opt small{display:block;color:var(--muted);margin-top:4px;font-size:13px;margin-left:24px}
+  .msg{border-radius:8px;padding:12px 14px;margin-top:14px;font-size:14px;display:none}
+  .msg.err{background:var(--errbg);border:1px solid #f0b8b8;color:var(--err);display:block}
+  .msg.warn{background:var(--warnbg);border:1px solid #e8dba6;color:var(--warn);display:block}
+  .msg.ok{background:var(--okbg);border:1px solid #a9d6ad;color:#1b5e20;display:block}
+  table{width:100%;border-collapse:collapse;margin-top:10px;font-size:14px}
+  th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{background:#eef2f7;color:var(--navy);width:42%}
+  .kvedList{max-height:260px;overflow:auto;border:1px solid var(--line);border-radius:8px;margin-top:8px}
+  .kvedList label{display:flex;gap:10px;align-items:flex-start;margin:0;padding:10px 12px;border-bottom:1px solid #eef1f5;font-weight:400;cursor:pointer}
+  .kvedList label:hover{background:#f7f9fc}
+  .kvedList code{font-weight:700;color:var(--navy);min-width:52px}
+  .extract{border:2px solid var(--navy);border-radius:10px;padding:18px;margin-top:16px;background:#fff;position:relative}
+  .extract h4{margin:0 0 2px;color:var(--navy);font-size:17px}
+  .stamp{position:absolute;right:14px;top:14px;border:2px solid #b9c4d2;color:#b9c4d2;border-radius:6px;
+    padding:4px 8px;font-size:11px;font-weight:700;transform:rotate(-6deg)}
+  .code{font-size:22px;letter-spacing:4px;font-weight:700;color:var(--navy)}
+  footer{color:var(--muted);font-size:13px;margin-top:26px;text-align:center}
+  footer a{color:var(--muted)}
+  .hidden{display:none}
+  @media print{header,.notice,.actions,.noprint,footer{display:none!important}
+    body{background:#fff} .card{border:none;padding:0} .extract{border:2px solid #000}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="brand">Навчальний тренажер: реєстрація ФОП
+      <small>Сторожинецький лісовий фаховий коледж · Основи підприємницької діяльності</small></div>
+    <div class="badge">НАВЧАЛЬНИЙ ТРЕНАЖЕР</div>
+  </div>
+</header>
+<div class="notice"><div class="wrap">Це не державний сервіс і не портал «Дія». Використовуйте лише умовні дані з картки завдання. На сервер передається тільки ваше прізвище, група, номер завдання й бал.</div></div>
+
+<div class="wrap">
+
+<section id="s0" class="screen">
+  <h1>Практична робота № 1. Оформлення документів для державної реєстрації</h1>
+  <p class="lead">Ви пройдете ті самі кроки, що й справжній підприємець під час реєстрації ФОП онлайн: електронний підпис, вибір видів діяльності за КВЕД, заповнення заяви, вибір системи оподаткування та отримання запису в реєстрі. Наприкінці результат надсилається викладачеві.</p>
+  <div class="card">
+    <h2>Крок 1. Представтеся</h2>
+    <p class="hint">Пишіть прізвище так само, як у журналі — за ним викладач знайде ваш результат.</p>
+    <div class="row">
+      <div><label for="stName0">Прізвище та ім'я студента</label><input type="text" id="stName0" placeholder="Петренко Олена" autocomplete="off"></div>
+      <div><label for="stGroup0">Навчальна група</label><input type="text" id="stGroup0" placeholder="наприклад, О-21" autocomplete="off"></div>
+    </div>
+    <h2 style="margin-top:22px">Крок 2. Оберіть своє завдання</h2>
+    <p class="hint">Номер завдання зазначено у вашій картці. Усі особи та їхні дані вигадані.</p>
+    <div class="msg" id="msg0"></div>
+    <div class="caseGrid" id="caseGrid"></div>
+  </div>
+</section>
+
+<section id="steps" class="screen hidden">
+  <div class="steps" id="bar"></div>
+  <div class="card">
+    <div class="stepno" id="stepno"></div>
+    <h2 id="stepTitle"></h2>
+    <p class="lead" id="stepLead"></p>
+    <div id="caseBox" class="casebox"></div>
+    <div id="stepBody"></div>
+    <div class="msg" id="msg"></div>
+    <div class="actions">
+      <button class="btn" id="next">Далі</button>
+      <button class="btn2" id="back">Назад</button>
+    </div>
+  </div>
+</section>
+
+<section id="result" class="screen hidden">
+  <div class="card" id="resultCard"></div>
+</section>
+
+<footer class="noprint">
+  Навчальний тренажер для заняття з дисципліни «Основи підприємницької діяльності». Дані вигадані, документ юридичної сили не має.<br>
+  <a href="tov.html">Тренажер «Реєстрація ТОВ»</a> · <a href="results.html">Сторінка викладача</a>
+</footer>
+</div>
+
+<script src="config.js"></script>
+<script src="data.js"></script>
+<script>
+/* ---------- розкодування ключа до завдань ---------- */
+const KEY = (() => {
+  const pass = atob(window.KP);
+  const bin = atob(window.K);
+  const bytes = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i) ^ pass.charCodeAt(i % pass.length);
+  return JSON.parse(new TextDecoder("utf-8").decode(bytes));
+})();
+const keyOf = id => KEY.find(k => k.id === id);
+
+const KVED = [
+  {c:"10.71", t:"Виробництво хліба, хлібобулочних і борошняних кондитерських виробів"},
+  {c:"14.13", t:"Виробництво іншого верхнього одягу"},
+  {c:"14.19", t:"Виробництво іншого одягу й аксесуарів"},
+  {c:"16.23", t:"Виробництво інших дерев'яних будівельних конструкцій і столярних виробів"},
+  {c:"32.13", t:"Виробництво біжутерії та подібних виробів"},
+  {c:"43.21", t:"Електромонтажні роботи"},
+  {c:"47.19", t:"Інші види роздрібної торгівлі в неспеціалізованих магазинах"},
+  {c:"47.81", t:"Роздрібна торгівля з лотків і на ринках харчовими продуктами, напоями"},
+  {c:"47.89", t:"Роздрібна торгівля з лотків і на ринках іншими товарами"},
+  {c:"47.91", t:"Роздрібна торгівля, що здійснюється через мережу Інтернет"},
+  {c:"49.41", t:"Вантажний автомобільний транспорт"},
+  {c:"56.10", t:"Діяльність ресторанів, надання послуг мобільного харчування"},
+  {c:"56.30", t:"Обслуговування напоями"},
+  {c:"62.01", t:"Комп'ютерне програмування"},
+  {c:"95.11", t:"Ремонт комп'ютерів і периферійного устатковання"},
+  {c:"95.22", t:"Ремонт побутових приладів, домашнього та садового обладнання"},
+  {c:"95.23", t:"Ремонт взуття та шкіряних виробів"},
+  {c:"96.02", t:"Надання послуг перукарнями та салонами краси"},
+];
+
+const GROUPS = [
+  {g:1, t:"Перша група", d:"Роздрібна торгівля з лотків і на ринках або побутові послуги населенню. Без найманих працівників. Дохід — до 1 444 049 грн на рік. Єдиний податок — до 332,80 грн на місяць."},
+  {g:2, t:"Друга група", d:"Послуги населенню та платникам єдиного податку, виробництво і продаж товарів, ресторанне господарство. До 10 найманих працівників. Дохід — до 7 211 598 грн. Єдиний податок — до 1 729,40 грн на місяць."},
+  {g:3, t:"Третя група", d:"Будь-які дозволені види діяльності, будь-які клієнти, без обмеження кількості працівників. Дохід — до 10 091 049 грн. Єдиний податок — 5% від доходу (3% для платників ПДВ)."},
+  {g:0, t:"Загальна система оподаткування", d:"Податок на доходи фізичних осіб 18% і військовий збір із чистого прибутку. Без обмежень доходу, але складніший облік."},
+];
+
+let S = { caseId:null, step:0, score:12, errors:[], data:{}, kvedMain:null, kvedExtra:[],
+          group:null, signType:null, student:"", sgroup:"", started:0 };
+
+const STEPS = [
+  {no:"Крок 1 з 5", title:"Електронний підпис", lead:"Щоб подати заяву онлайн, потрібен кваліфікований електронний підпис (КЕП) — захищений електронний ключ, який юридично прирівнюється до власноручного підпису."},
+  {no:"Крок 2 з 5", title:"Дані заявника", lead:"Перенесіть дані з картки завдання. Уважно: вік заявника впливає на перелік документів."},
+  {no:"Крок 3 з 5", title:"Види діяльності за КВЕД", lead:"Оберіть основний вид діяльності — саме той, яким підприємець займатиметься переважно. За потреби додайте супутні коди."},
+  {no:"Крок 4 з 5", title:"Система оподаткування", lead:"Оберіть систему, яка відповідає умовам завдання. Читайте обмеження уважно — тут помиляються найчастіше."},
+  {no:"Крок 5 з 5", title:"Перевірка та підписання заяви", lead:"Перевірте заяву перед підписанням. Після підписання результат надсилається викладачеві."},
+];
+
+const $ = id => document.getElementById(id);
+const cur = () => CASES.find(c => c.id === S.caseId);
+
+$("caseGrid").innerHTML = CASES.map(c =>
+  `<button class="caseCard" data-id="${c.id}"><b>Завдання ${c.id}. ${c.short}</b><span>${c.name}</span></button>`).join("");
+$("caseGrid").addEventListener("click", e => {
+  const b = e.target.closest(".caseCard"); if (!b) return;
+  const nm = ($("stName0").value||"").trim(), gr = ($("stGroup0").value||"").trim();
+  if (nm.length < 3 || !gr) {
+    const m = $("msg0"); m.className = "msg warn";
+    m.textContent = "Спершу впишіть прізвище, ім'я та номер групи — без цього результат неможливо надіслати.";
+    window.scrollTo({top:0,behavior:"smooth"}); return;
+  }
+  S.student = nm; S.sgroup = gr; S.started = Date.now();
+  S.caseId = +b.dataset.id; S.step = 0;
+  $("s0").classList.add("hidden"); $("steps").classList.remove("hidden");
+  render();
+});
+
+function checkCode(name, caseId, score){
+  const s = String(name).trim().toLowerCase().replace(/\s+/g," ") + "|" + caseId + "|" + score;
+  let h = 7;
+  for (let i=0;i<s.length;i++){ h = (h*31 + s.charCodeAt(i)) >>> 0; }
+  const A = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+  let out = "", x = h;
+  for (let i=0;i<4;i++){ out += A[x % A.length]; x = Math.floor(x / A.length); }
+  return out;
+}
+
+function render(){
+  const c = cur(), st = STEPS[S.step];
+  $("bar").innerHTML = STEPS.map((_,i)=>`<div class="${i<S.step?'done':i===S.step?'now':''}"></div>`).join("");
+  $("stepno").textContent = st.no; $("stepTitle").textContent = st.title; $("stepLead").textContent = st.lead;
+  $("caseBox").innerHTML = `<b>Завдання ${c.id}. ${c.name}.</b> ${c.desc}`;
+  $("msg").className = "msg"; $("msg").textContent = "";
+  $("back").style.display = S.step === 0 ? "none" : "inline-block";
+  $("next").textContent = S.step === STEPS.length-1 ? "Підписати та подати заяву" : "Далі";
+  $("stepBody").innerHTML = BODY[S.step](c);
+  if (S.step === 2) drawKved("");
+  window.scrollTo(0,0);
+}
+
+const BODY = [
+  c => `<h3>Як ви отримаєте підпис?</h3>
+    ${[["diia","Мобільний застосунок з електронним підписом","Найшвидший спосіб: підпис оформлюється у смартфоні за кілька хвилин, потрібна лише ID-картка або біометричний паспорт."],
+       ["bank","Через банк, у якому обслуговуєтесь","Безкоштовно для клієнтів банку, оформлюється в застосунку або у відділенні."],
+       ["acsk","В акредитованому центрі сертифікації ключів","Потрібен особистий візит із паспортом; підпис записують на захищений носій."],
+       ["none","Підпис не потрібен — подам заяву без нього","Онлайн-подання без електронного підпису неможливе."]]
+      .map(([v,t,d])=>`<label class="opt"><input type="radio" name="sign" value="${v}"><b>${t}</b><small>${d}</small></label>`).join("")}`,
+  c => `<div class="row">
+      <div><label for="pib">Прізвище, ім'я та по батькові</label><input type="text" id="pib" placeholder="як у картці завдання"></div>
+      <div><label for="birth">Дата народження</label><input type="date" id="birth"></div>
+    </div>
+    <div class="row">
+      <div><label for="rnokpp">Реєстраційний номер облікової картки платника податків</label>
+        <input type="text" id="rnokpp" inputmode="numeric" maxlength="10" placeholder="10 цифр">
+        <div class="hint">У побуті — «ідентифікаційний код» або ІПН.</div></div>
+      <div><label for="addr">Місце проживання</label><input type="text" id="addr" placeholder="населений пункт"></div>
+    </div>
+    <div class="row">
+      <div><label for="phone">Номер телефону</label><input type="tel" id="phone" placeholder="0XX XXX XX XX"></div>
+      <div><label for="email">Електронна пошта</label><input type="email" id="email" placeholder="example@mail.com"></div>
+    </div>
+    <h3>Додатки до заяви</h3>
+    <label class="opt"><input type="checkbox" id="consent"><b>Нотаріально засвідчена письмова згода батьків (усиновлювачів) або піклувальника</b>
+      <small>Додається, якщо заявникові виповнилося 16, але ще немає 18 років.</small></label>`,
+  c => `<label for="kvedSearch">Пошук за кодом або назвою</label>
+    <input type="text" id="kvedSearch" placeholder="наприклад: ремонт, торгівля, 47">
+    <h3>Основний вид діяльності</h3><div class="kvedList" id="kvedMainList"></div>
+    <h3>Додаткові види діяльності (за бажанням)</h3><div class="kvedList" id="kvedExtraList"></div>`,
+  c => `<h3>Оберіть систему оподаткування</h3>
+    ${GROUPS.map(g=>`<label class="opt"><input type="radio" name="grp" value="${g.g}"><b>${g.t}</b><small>${g.d}</small></label>`).join("")}`,
+  c => {
+    const d = S.data, k = KVED.find(x=>x.c===S.kvedMain), g = GROUPS.find(x=>x.g===S.group);
+    return `<table>
+      <tr><th>Заявник</th><td>${d.pib||"—"}</td></tr>
+      <tr><th>Дата народження</th><td>${d.birth||"—"}</td></tr>
+      <tr><th>Реєстраційний номер платника податків</th><td>${d.rnokpp||"—"}</td></tr>
+      <tr><th>Місце проживання</th><td>${d.addr||"—"}</td></tr>
+      <tr><th>Контакти</th><td>${(d.phone||"—")} · ${(d.email||"—")}</td></tr>
+      <tr><th>Основний вид діяльності</th><td>${k?k.c+" — "+k.t:"—"}</td></tr>
+      <tr><th>Додаткові види діяльності</th><td>${S.kvedExtra.length?S.kvedExtra.join(", "):"немає"}</td></tr>
+      <tr><th>Система оподаткування</th><td>${g?g.t:"—"}</td></tr>
+      <tr><th>Згода батьків додається</th><td>${d.consent?"так":"ні"}</td></tr>
+      <tr><th>Адміністративний збір</th><td>не справляється</td></tr>
+    </table>
+    <h3>Підписання</h3>
+    <label for="pin">Введіть п'ятизначний код підпису (будь-які 5 цифр — це імітація)</label>
+    <input type="text" id="pin" inputmode="numeric" maxlength="5" placeholder="•••••" style="max-width:160px">`;
+  },
+];
+
+$("back").onclick = () => { if (S.step>0){ S.step--; render(); } };
+$("next").onclick = () => { if (CHECK[S.step](cur())) { if (S.step===STEPS.length-1) finish(); else { S.step++; render(); } } };
+
+function say(type, text){ const m=$("msg"); m.className="msg "+type; m.innerHTML=text; window.scrollTo({top:document.body.scrollHeight,behavior:"smooth"}); }
+const CAP = { sign:1, data:2, age:2, kved:3, group:3 };
+const lost = {};
+function penalty(key, text){
+  lost[key] = Math.min((lost[key]||0)+1, CAP[key]||1);
+  S.score = Math.max(0, 12 - Object.values(lost).reduce((a,b)=>a+b,0));
+  if (!S.errors.includes(key)) S.errors.push(key);
+  say("err", text);
+}
+
+const CHECK = [
+  () => {
+    const v = (document.querySelector('input[name=sign]:checked')||{}).value;
+    if (!v) { say("warn","Оберіть один із варіантів."); return false; }
+    if (v === "none") { penalty("sign","Без кваліфікованого електронного підпису подати заяву онлайн неможливо: саме він замінює власноручний підпис на документі. Оберіть інший варіант."); return false; }
+    S.signType = v; return true;
+  },
+  c => {
+    const g = id => ($(id).value||"").trim();
+    const d = { pib:g("pib"), birth:g("birth"), rnokpp:g("rnokpp"), addr:g("addr"), phone:g("phone"), email:g("email"), consent:$("consent").checked };
+    if (!d.pib||!d.birth||!d.rnokpp||!d.addr||!d.phone||!d.email) { say("warn","Заповніть усі поля заяви — реєстратор не прийме документ із порожніми графами."); return false; }
+    if (!/^\d{10}$/.test(d.rnokpp)) { penalty("data","Реєстраційний номер облікової картки платника податків складається рівно з 10 цифр. Перевірте картку завдання."); return false; }
+    const age = Math.floor((Date.now()-new Date(d.birth))/31557600000);
+    if (age < 16) { penalty("age","Особа молодша 16 років не може бути зареєстрована підприємцем. Перевірте дату народження в картці завдання."); return false; }
+    const need = age < 18;
+    if (need && !d.consent) { penalty("age","Заявникові ще немає 18 років, тому до заяви обов'язково додається нотаріально засвідчена письмова згода батьків або піклувальника. Позначте цей додаток."); return false; }
+    if (!need && d.consent) { penalty("age","Заявник повнолітній, тому згода батьків не потрібна — зайвий документ реєстратор не прийме. Зніміть позначку."); return false; }
+    S.data = d; return true;
+  },
+  c => {
+    if (!S.kvedMain) { say("warn","Оберіть основний вид діяльності."); return false; }
+    const k = keyOf(c.id);
+    if (!k.kved.includes(S.kvedMain)) {
+      penalty("kved","Обраний код не відповідає діяльності з картки завдання. Перечитайте опис: основним є той вид діяльності, яким підприємець займатиметься переважно. " + k.kvedWhy);
+      return false;
+    }
+    return true;
+  },
+  c => {
+    const v = document.querySelector('input[name=grp]:checked');
+    if (!v) { say("warn","Оберіть систему оподаткування."); return false; }
+    const k = keyOf(c.id);
+    if (+v.value !== k.group) { penalty("group","Ця система не підходить до умов завдання. " + k.groupWhy); return false; }
+    S.group = +v.value; return true;
+  },
+  () => {
+    const pin = ($("pin").value||"").trim();
+    if (!/^\d{5}$/.test(pin)) { say("warn","Введіть п'ятизначний код підпису."); return false; }
+    return true;
+  },
+];
+
+document.addEventListener("input", e => { if (e.target.id === "kvedSearch") drawKved(e.target.value); });
+document.addEventListener("change", e => {
+  if (e.target.name === "kvedMain") S.kvedMain = e.target.value;
+  if (e.target.name === "kvedExtra") S.kvedExtra = [...document.querySelectorAll('input[name=kvedExtra]:checked')].map(i=>i.value);
+});
+function drawKved(q=""){
+  const ml = $("kvedMainList"), el = $("kvedExtraList"); if (!ml) return;
+  const f = KVED.filter(k => !q || (k.c+" "+k.t).toLowerCase().includes(q.toLowerCase()));
+  ml.innerHTML = f.map(k=>`<label><input type="radio" name="kvedMain" value="${k.c}" ${S.kvedMain===k.c?"checked":""}><code>${k.c}</code><span>${k.t}</span></label>`).join("") || `<label>Нічого не знайдено</label>`;
+  el.innerHTML = f.map(k=>`<label><input type="checkbox" name="kvedExtra" value="${k.c}" ${S.kvedExtra.includes(k.c)?"checked":""}><code>${k.c}</code><span>${k.t}</span></label>`).join("") || `<label>Нічого не знайдено</label>`;
+}
+
+/* ---------- надсилання результату (JSONP, без CORS) ---------- */
+let sendSeq = 0;
+function sendResult(payload, done){
+  const cfg = window.TRAINER_CONFIG || {};
+  if (!cfg.endpoint) { done(false, "Адресу сервера не налаштовано — покажіть викладачеві контрольний код."); return; }
+  const cb = "cb" + (++sendSeq) + "_" + Date.now();
+  const timer = setTimeout(() => { cleanup(); done(false, "Сервер не відповів. Перевірте інтернет і натисніть «Надіслати ще раз»."); }, 12000);
+  function cleanup(){ clearTimeout(timer); delete window[cb]; if (s.parentNode) s.parentNode.removeChild(s); }
+  window[cb] = res => { cleanup(); done(!!(res && res.ok), res && res.error ? res.error : ""); };
+  const q = Object.entries({...payload, l:cfg.lesson||"", action:"save", token:cfg.writeToken||"", callback:cb})
+    .map(([k,v]) => encodeURIComponent(k)+"="+encodeURIComponent(v)).join("&");
+  const s = document.createElement("script");
+  s.src = cfg.endpoint + (cfg.endpoint.includes("?") ? "&" : "?") + q;
+  s.onerror = () => { cleanup(); done(false,
+    "Не вдалося з'єднатися із сервером — запишіть контрольний код і покажіть його викладачеві. " +
+    "<span style='font-size:12px'>(для викладача: адреса сервера не відповідає — " +
+    "<a href='" + cfg.endpoint + "' target='_blank' rel='noopener'>перевірити адресу</a>, " +
+    "далі сторінка «Результати» → «Перевірка зв'язку»)</span>"); };
+  document.body.appendChild(s);
+}
+
+function finish(){
+  const c = cur(), d = S.data, k = KVED.find(x=>x.c===S.kvedMain), g = GROUPS.find(x=>x.g===S.group);
+  const num = String(20260000000 + c.id*1000 + Math.floor(Math.random()*900+100));
+  const today = new Date().toLocaleDateString("uk-UA");
+  const mins = Math.max(1, Math.round((Date.now() - S.started)/60000));
+  const code = checkCode(S.student, c.id, S.score);
+  const lvl = S.score>=10?"високий":S.score>=7?"достатній":S.score>=4?"середній":"початковий";
+  const mistakes = S.errors.length
+    ? `<p>Під час роботи ви виправили помилки в таких кроках: ${S.errors.map(e=>({sign:"електронний підпис",data:"дані заявника",age:"вік заявника та додатки",kved:"вибір КВЕД",group:"система оподаткування"}[e])).join(", ")}. За кожну знято бали.</p>`
+    : `<p>Помилок не допущено — усі рішення були правильними з першого разу.</p>`;
+  const kk = keyOf(c.id);
+
+  $("steps").classList.add("hidden"); $("result").classList.remove("hidden");
+  $("resultCard").innerHTML = `
+    <h2>Заяву подано. Запис внесено до навчального реєстру</h2>
+    <p class="lead noprint">У справжній процедурі запис у Єдиному державному реєстрі з'являється протягом 24 годин, крім вихідних і святкових днів, а адміністративний збір за реєстрацію створення ФОП не справляється.</p>
+    <div class="msg ok" style="display:block"><b>Ваш результат: ${S.score} з 12 балів</b> — ${lvl} рівень. ${mistakes}</div>
+    <div class="msg" id="sendMsg"></div>
+    <div class="extract">
+      <div class="stamp">НАВЧАЛЬНИЙ<br>ДОКУМЕНТ</div>
+      <h4>Витяг із навчального реєстру</h4>
+      <p class="hint">Документ сформовано тренажером і юридичної сили не має</p>
+      <table>
+        <tr><th>Студент(ка), група</th><td><b>${S.student}</b>, ${S.sgroup}</td></tr>
+        <tr><th>Завдання</th><td>№ ${c.id} — ${c.short}</td></tr>
+        <tr><th>Номер запису</th><td>${num}</td></tr>
+        <tr><th>Дата запису</th><td>${today}</td></tr>
+        <tr><th>Прізвище, ім'я, по батькові</th><td>${d.pib}</td></tr>
+        <tr><th>Реєстраційний номер платника податків</th><td>${d.rnokpp}</td></tr>
+        <tr><th>Основний вид діяльності</th><td>${k.c} — ${k.t}</td></tr>
+        <tr><th>Додаткові види діяльності</th><td>${S.kvedExtra.length?S.kvedExtra.join(", "):"немає"}</td></tr>
+        <tr><th>Система оподаткування</th><td>${g.t}</td></tr>
+        <tr><th>Час виконання</th><td>${mins} хв</td></tr>
+        <tr><th>Бал за роботу</th><td><b>${S.score} з 12</b></td></tr>
+      </table>
+      <p style="margin-top:12px">Контрольний код: <span class="code">${code}</span></p>
+      <p class="hint">Якщо результат не надіслався, назвіть викладачеві цей код — за ним він перевірить ваш бал.</p>
+    </div>
+    <div class="actions noprint">
+      <button class="btn" id="resend">Надіслати ще раз</button>
+      <button class="btn2" onclick="window.print()">Роздрукувати витяг</button>
+      <button class="btn2" onclick="location.reload()">Пройти ще раз</button>
+    </div>
+    <div class="noprint">
+      <h3>Що перевіряло завдання</h3>
+      <p><b>Вид діяльності.</b> ${kk.kvedWhy}</p>
+      <p><b>Система оподаткування.</b> ${kk.groupWhy}</p>
+      <p><b>Документи.</b> ${kk.minor
+        ? "Заявниці ще немає 18 років, тому до заяви обов'язково додається нотаріально засвідчена письмова згода батьків або піклувальника."
+        : "Заявник повнолітній, тому достатньо самої заяви; паспорт пред'являється лише при особистому поданні."}</p>
+    </div>`;
+
+  const payload = { n:S.student, g:S.sgroup, c:c.id, s:S.score, k:code, m:mins,
+                    kv:S.kvedMain, gr:S.group, e:S.errors.join("|") };
+  const post = () => {
+    const box = $("sendMsg"); const btn = $("resend");
+    box.className = "msg warn"; box.textContent = "Надсилаємо результат викладачеві…";
+    if (btn) btn.disabled = true;
+    sendResult(payload, (ok, err) => {
+      box.className = "msg " + (ok ? "ok" : "err");
+      box.innerHTML = ok
+        ? "Результат надіслано викладачеві. Можете закривати сторінку."
+        : "Не вдалося надіслати результат. " + err;
+      if (btn) btn.disabled = false;
+    });
+  };
+  $("resend").onclick = post;
+  post();
+  window.scrollTo(0,0);
+}
+</script>
+</body>
+</html>
